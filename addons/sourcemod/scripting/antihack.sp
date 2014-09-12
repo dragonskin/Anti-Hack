@@ -30,6 +30,7 @@
 #define ANTIHACK
 
 #include <sourcemod>
+#include "AntiHack/includes/antihack_interface.inc"
 
 public Plugin:myinfo=
 {
