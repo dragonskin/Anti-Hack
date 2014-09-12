@@ -17,6 +17,59 @@
 	All rights reserved.
 */
 
+stock String:Potiental_Threat_Words[][32] = {"LMAOBOX",
+										"GET LMAOBOX!",
+										"WWW.LMAOBOX.NET",
+										"TMCheats",
+										"AimJunkies",
+										"AvengedCheats",
+										"weebly",
+										"AIMWARE"};
+
+enum AntiHackSQLType
+{
+	SQLType_Unknown = 0,
+	SQLType_MySQL,
+	SQLType_SQLite,
+}
+
+// Games that AntiHack Supports
+enum eGameNumberValve {
+	AHGame_Unknown = 0,
+	AHGame_CSS,
+	AHGame_TF2,
+	AHGame_DODS,
+	AHGame_INSMOD,
+	AHGame_L4D,
+	AHGame_L4D2,
+	AHGame_HL2DM,
+	AHGame_FOF,
+	AHGame_GMOD,
+	AHGame_HL2CTF,
+	AHGame_HIDDEN,
+	AHGame_ND,
+	AHGame_CSGO,
+};
+
+enum AHHackerProp
+{
+	iPlayerID,
+	iFirstTimeHacked,
+	iLastTimeHacked,
+	bool:bIsHacker,
+	bool:bAntiAimbot,
+	bool:bChanceOnHit,
+	bool:bNoDamage,
+	iAimbotCount,
+	iSpinhackCount,
+	iEyeAnglesCount,
+	iChangingInterfaceCount,
+	iChangingTimerCount,
+	iRewritingMovementCommandsCount,
+	iChangingViewAnglesAimbotCount,
+	iCrashed,
+}
+
 enum Potential_Threat
 {
 	// For new possible threats that are experiemental and should be ignored
