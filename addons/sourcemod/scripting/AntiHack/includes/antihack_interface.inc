@@ -27,6 +27,8 @@
 #include <sourcemod>
 #include <antihack>
 
+#include <sdktools_functions>
+
 #tryinclude <morecolors>
 
 #include "AntiHack/includes/antihack_variables.inc"
@@ -128,9 +130,6 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
  */
 forward bool:AHInitNativesForwards();
 
-//INTERFACE ONLY VARIABLES, use for determining game type
-stock tValveGame;
-
 stock ValveGameEnum:AH_GetGame()
 {
 	return ValveGameEnum:tValveGame;
@@ -199,17 +198,34 @@ stock bool:GameCOLOR()
 	|| AH_Game_Detection == AHGame_L4D2);
 }
 
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
-// Internal Use Only Stocks
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+// STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+
+stock IncreaseAimBotCount(client)
+{
+	AHSetHackerProp(client,iAimbotCount,AHGetHackerProp(client,iAimbotCount)+1);
+}
+
+stock DecreaseAimBotCount(client)
+{
+	if(AHGetHackerProp(client,iAimbotCount)>0)
+	{
+		AHSetHackerProp(client,iAimbotCount,AHGetHackerProp(client,iAimbotCount)-1);
+	}
+}
 
 //pass me a trie with key "query" = your query into originalqueryTrie
 stock SQLCheckForErrors(Handle:hndl,const String:originalerror[],const String:prependstr[]="",Handle:originalqueryTrie=Handle:0) {
@@ -356,3 +372,6 @@ stock SetEntityAimToClient( edict, target)
 	angles[2] = 0.0;
 	TeleportEntity( edict, NULL_VECTOR, angles, NULL_VECTOR );
 }
+
+
+

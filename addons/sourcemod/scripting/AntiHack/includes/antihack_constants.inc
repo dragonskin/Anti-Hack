@@ -17,15 +17,6 @@
 	All rights reserved.
 */
 
-stock String:Potiental_Threat_Words[][32] = {"LMAOBOX",
-										"GET LMAOBOX!",
-										"WWW.LMAOBOX.NET",
-										"TMCheats",
-										"AimJunkies",
-										"AvengedCheats",
-										"weebly",
-										"AIMWARE"};
-
 enum AntiHackSQLType
 {
 	SQLType_Unknown = 0,
@@ -49,44 +40,5 @@ enum eGameNumberValve {
 	AHGame_HIDDEN,
 	AHGame_ND,
 	AHGame_CSGO,
-};
-
-enum AHHackerProp
-{
-	iPlayerID,
-	iFirstTimeHacked,
-	iLastTimeHacked,
-	bool:bIsHacker,
-	bool:bAntiAimbot,
-	bool:bChanceOnHit,
-	bool:bNoDamage,
-	iAimbotCount,
-	iSpinhackCount,
-	iEyeAnglesCount,
-	iChangingInterfaceCount,
-	iChangingTimerCount,
-	iRewritingMovementCommandsCount,
-	iChangingViewAnglesAimbotCount,
-	iCrashed,
-}
-
-enum Potential_Threat
-{
-	// For new possible threats that are experiemental and should be ignored
-	PT_Experimental = 0,
-
-	// Possible Potiental Threats
-	Aim_PT,
-	Eye_PT
-	Spin_PT,
-
-	// Commands Misuse Potential Threats
-	Command_Rewrite_PT,
-	Command_Changing_Timer_PT,
-	Command_Changing_Interface_PT,
-
-	// Lists of Bans from the internet
-	EAC_Potential_Threat,
-	ESEA_Potential_Threat,
 };
 

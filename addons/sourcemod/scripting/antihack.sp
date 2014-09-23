@@ -30,7 +30,21 @@
 #define ANTIHACK
 
 #include <sourcemod>
+#include <antihack>
+#include <smac>
 #include "AntiHack/includes/antihack_interface.inc"
+
+#include "AntiHack/AntiHack_000_Natives.sp"
+#include "AntiHack/AntiHack_000_OnGameFrame.sp"
+#include "AntiHack/AntiHack_Aim_Calculations.sp"
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
+
+new Handle:ClientHUD;
 
 public Plugin:myinfo=
 {
@@ -40,22 +54,6 @@ public Plugin:myinfo=
 	version=VERSION_NUM,
 };
 
-public bool:AHInitNativesForwards()
-{
-	//if(!AntiHack_InitNatives())
-	//{
-		//LogError("[Antihack] There was a failure in creating the native based functions, definately halting.");
-		//return false;
-	//}
-	//if(!AntiHack_InitForwards())
-	//{
-		//LogError("[Antihack] There was a failure in creating the forward based functions, definately halting.");
-		//return false;
-	//}
-
-	return true;
-}
-
 public OnPluginStart()
 {
 
@@ -63,6 +61,10 @@ public OnPluginStart()
 
 	PrintToServer("[War3Evo] Plugin finished loading.\n-------------------END OnPluginStart-------------------");
 
+	ClientHUD = CreateHudSynchronizer();
+	CreateTimer(0.1,ClientAim,_,TIMER_REPEAT);
+
+	g_hCvarAimbotBan = FindConVar("smac_aimbot_ban", "0", "Number of aimbot detections before a player is banned. Minimum allowed is 4. (0 = Never ban)", FCVAR_PLUGIN, true, 0.0);
 }
 
 public OnMapStart()
@@ -72,7 +74,12 @@ public OnMapStart()
 
 public OnAllPluginsLoaded() //called once only, will not call again when map changes
 {
+	new smac_version = StringToInt(SMAC_VERSION);
+	if(smac_version < 0.8.5.1) then SetFailState("[AntiHack] You must have at least SMAC version 0.8.5.1 or higher.");
+
 	PrintToServer("OnAllPluginsLoaded");
+
+	SetConVarInt(g_hCvarAimbotBan, 0);
 }
 
 public OnClientPutInServer(client)
@@ -81,4 +88,56 @@ public OnClientPutInServer(client)
 
 public OnClientDisconnect(client)
 {
+}
+
+public Action:ClientAim(Handle:timer,any:userid)
+{
+	for(new client=1;client<=MaxClients;client++)
+	{
+		if(IsValidPlayer(client))
+		{
+			SetHudTextParams(-1.0, 0.20, 0.1, 255, 0, 0, 255);
+			ShowSyncHudText(client, ClientHUD, " Angles: [%.2f] [%.2f] [%.2f] ",CachedAngle[client][0],CachedAngle[client][1],CachedAngle[client][2]);
+		}
+	}
+}
+
+public Native_AH_CachedAngle(Handle:plugin,numParams)
+{
+	new client=GetNativeCell(1);
+	SetNativeArray(2,CachedAngle[client],3);
+}
+
+public Native_AH_CachedPosition(Handle:plugin,numParams)
+{
+	new client=GetNativeCell(1);
+	SetNativeArray(2,CachedPos[client],3);
+}
+
+public Action:SMAC_CheatDetected(client, DetectionType:type = Detection_Unknown, Handle:info = INVALID_HANDLE)
+{
+	if(IsValidPlayer(client))
+	{
+		switch (type)
+		{
+			case:Detection_Aimbot
+			{
+				g_iAimDetections[client]++;
+				IncreaseAimBotCount(client);
+			}
+		}
+	}
+}
+
+public Action:Timer_DecreaseCount(Handle:timer, any:userid)
+{
+	/* Decrease the detection count by 1. */
+	new client = GetClientOfUserId(userid);
+
+	if (IS_CLIENT(client) && g_iAimDetections[client])
+	{
+		g_iAimDetections[client]--;
+	}
+
+	return Plugin_Stop;
 }

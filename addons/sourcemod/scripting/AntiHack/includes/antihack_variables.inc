@@ -17,5 +17,17 @@
 	All rights reserved.
 */
 
+stock tValveGame;
+
 stock dummy;
 stock String:dummystr[32];
+
+new HistoryCount=0;
+
+new Float:CachedAngle[MAXPLAYERS + 1][MaxHistory][3];
+new Float:CachedPos[MAXPLAYERS + 1][MaxHistory][3];
+
+new g_iAimDetections[MAXPLAYERS+1];
+
+new Handle:g_hCvarAimbotBan = INVALID_HANDLE;
+
