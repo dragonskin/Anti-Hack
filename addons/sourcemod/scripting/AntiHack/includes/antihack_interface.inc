@@ -198,6 +198,22 @@ stock bool:GameCOLOR()
 	|| AH_Game_Detection == AHGame_L4D2);
 }
 
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+// NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES NATIVES
+
+
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
@@ -213,6 +229,127 @@ stock bool:GameCOLOR()
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+
+stock FilterSentence(String:message[192]) {
+	new charMax = strlen(message);
+	new charIndex;
+	new copyPos = 0;
+
+	new String:strippedString[192];
+
+	for (charIndex = 0; charIndex < charMax; charIndex++) {
+		// Reach end of string. Break.
+		if (message[copyPos] == 0) {
+			strippedString[copyPos] = 0;
+			break;
+		}
+
+		// Found a normal character. Copy.
+		if (IsNormalCharacter(message[charIndex])) {
+			strippedString[copyPos] = message[charIndex];
+			copyPos++;
+		}
+	}
+
+	// Copy back to passing parameter.
+	strcopy(message, 192, strippedString);
+}
+
+stock bool:IsNormalCharacter(characterNum) {
+	return (characterNum 31 && characterNum < 127);
+}
+
+stock is_blocked_word(client, String: command[])
+{
+	new blocked_word = 0;
+	new word_index = 0;
+
+	new String:sStrName[128];
+	GetClientName(client, sStrName, sizeof(sStrName));
+
+	while ((blocked_word == 0) && (word_index < sizeof(blocked_words))) {
+		if (strcmp(command, blocked_words[word_index]) == 0) {
+			blocked_word++;
+		}
+		else if (StrContains(command, blocked_words[word_index], false)>-1) {
+			blocked_word++;
+		}
+		else if (StrContains(sStrName, blocked_words[word_index], false)>-1) {
+			blocked_word++;
+		}
+		word_index++;
+	}
+	if (blocked_word > 0) {
+		return 1;
+	}
+	return 0;
+}
+
+stock bool:ParseFile()
+{
+	decl String:path[1024],String:vip_map_file_path[1024];
+
+	GetConVarString(h_antihack_wordsearch_location, vip_map_file_path, sizeof(vip_map_file_path));
+
+	BuildPath(Path_SM,path,sizeof(path),vip_map_file_path);
+
+	/* Return true if an update was available. */
+	new Handle:kv = CreateKeyValues("AntiHack");
+
+	if (!FileToKeyValues(kv, path))
+	{
+		CloseHandle(kv);
+		return false;
+	}
+
+	ClearArray(g_hMapNames);
+
+	new String:sBuffer[32];
+
+	if (KvJumpToKey(kv, "WordsSearch"))
+	{
+		if (KvGotoFirstSubKey(kv, false))
+		{
+			do
+			{
+				KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
+				AddStringOnly(g_hPotientalThreatWords,sBuffer);
+
+			} while (KvGotoNextKey(kv, false));
+			KvGoBack(kv);
+		}
+
+		KvGoBack(kv);
+	}
+
+	CloseHandle(kv);
+
+	return true;
+}
+
+stock AddStringOnly(Handle:handleString, const String:key[])
+{
+	new String:TmpStr[32];
+	for(new i = 0; i < GetArraySize(handleString); i++)
+	{
+
+		GetArrayString(handleString, i, TmpStr, sizeof(TmpStr));
+		// If duplicate, return
+		if(strcmp(TmpStr, key) == 0)
+		{
+			return i;
+		}
+	}
+	new String:sTmpStr[32];
+	strcopy(sTmpStr, sizeof(sTmpStr), key);
+	TrimString(sTmpStr);
+	AStrToLower(sTmpStr);
+
+	PushArrayString(handleString, sTmpStr);
+	//DP("String: %s",key);
+
+	return -1;
+}
 
 stock IncreaseAimBotCount(client)
 {

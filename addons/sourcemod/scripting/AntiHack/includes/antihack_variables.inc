@@ -31,3 +31,10 @@ new g_iAimDetections[MAXPLAYERS+1];
 
 new Handle:g_hCvarAimbotBan = INVALID_HANDLE;
 
+new Handle:g_hPotientalThreatWords = INVALID_HANDLE;
+
+new Handle:h_antihack_wordsearch_location = INVALID_HANDLE;
+
+
+new Handle:g_hOnAHSayCommandFilter;
+
