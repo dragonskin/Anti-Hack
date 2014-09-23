@@ -1,4 +1,4 @@
-Anti-Hack
+Anti-Hack - Currently still in development.
 =========
 
 Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti-Hack.
