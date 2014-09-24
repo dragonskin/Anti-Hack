@@ -90,6 +90,8 @@ public OnPluginStart()
 
 	g_hPotientalThreatWords = CreateArray(32);
 
+	h_AutosaveTime=CreateConVar("antihacker_autosavetime","300.0");
+
 	h_CheckForUnicodeNames = CreateConVar("antihack_prevent_unicode_name_changing","1","1 - Enabled / 0 - Disable\nDoes not filter the name, but checks if they name contains banned unicode characters.");
 
 	h_CheckForSimilarNames = CreateConVar("antihack_prevent_similar_names","1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for similar names.\nIt is more aggressive than the Unicode Checker");
@@ -141,6 +143,8 @@ public OnAllPluginsLoaded() //called once only, will not call again when map cha
 	PrintToServer("OnAllPluginsLoaded");
 
 	SetConVarInt(g_hCvarAimbotBan, 0);
+
+	CreateTimer(GetConVarFloat(m_AutosaveTime),DoAutosave);
 }
 
 public Action:ClientAim(Handle:timer,any:userid)
@@ -417,5 +421,3 @@ public Action:AH_TeamSayCommand(client,args)
 	}
 	return Plugin_Continue;
 }
-
-
