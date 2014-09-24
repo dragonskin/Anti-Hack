@@ -229,6 +229,34 @@ stock bool:GameCOLOR()
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+stock AntiHackLog(const String:reason[]="", any:...)
+{
+	new String:szFile[256];
+
+	decl String:LogThis[2048];
+	VFormat(LogThis, sizeof(LogThis), reason, 2);
+
+	BuildPath(Path_SM, szFile, sizeof(szFile), "logs/antihack.log");
+	LogToFile(szFile, LogThis);
+}
+
+stock NotifyAdmins(const String:reason[]="", any:...)
+{
+	decl String:LogThis[2048];
+	VFormat(LogThis, sizeof(LogThis), reason, 2);
+
+	for(new r = 1; r <= MaxClients; r++)
+	{
+		if (IsClientInGame(r) && CheckCommandAccess(r, "smac_admin_notices", ADMFLAG_GENERIC, true))
+		{
+			CPrintToChat2(r,"{red}[ANTIHACK] %s", LogThis);
+		}
+	}
+
+	// Relay admin notice to IRC.
+	Format(LogThis, sizeof(LogThis), "[IRC-ANTIHACK] %s", LogThis);
+	IRC_Broadcast(IrcChannel_Private, LogThis);
+}
 
 stock bool:ValidPlayer(client,bool:check_alive=false,bool:alivecheckbyhealth=false) {
 	if(client>0 && client<=MaxClients && IsClientConnected(client) && IsClientInGame(client))
