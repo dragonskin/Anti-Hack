@@ -167,7 +167,7 @@ public Native_AH_CachedPosition(Handle:plugin,numParams)
 	SetNativeArray(2,CachedPos[client],3);
 }
 
-public Action:SMAC_CheatDetected(client, DetectionType:type = Detection_Unknown, Handle:info = INVALID_HANDLE)
+public Action:SMAC_OnCheatDetected(client, const String:module[], DetectionType:type, Handle:info)
 {
 	if(IsValidPlayer(client))
 	{
