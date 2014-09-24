@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `antihack` (
+  `player_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `player_name` varchar(300) DEFAULT NULL,
+  `sComment` varchar(300) DEFAULT NULL,
+  `player_steam` varchar(64) DEFAULT NULL,
+  `iFirstTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `iLastTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `bIsHacker` tinyint(4) DEFAULT NULL,
+  `bAntiAimbot` tinyint(4) DEFAULT NULL,
+  `bChanceOnHit` tinyint(4) DEFAULT NULL,
+  `bNoDamage` tinyint(4) DEFAULT NULL,
+  `iAimbotCount` int(11) DEFAULT NULL,
+  `iSpinhackCount` int(11) DEFAULT NULL,
+  `iEyeAnglesCount` int(11) DEFAULT NULL,
+  `iTamperingButtonsCount` int(11) DEFAULT NULL,
+  `iTamperingTickcountCount` int(11) DEFAULT NULL,
+  `iReusingMovementCommandsCount` int(11) DEFAULT NULL,
+  `iTamperingViewAnglesAimbotCount` int(11) DEFAULT NULL,
+  `iCrashed` int(11) DEFAULT NULL,
+  PRIMARY KEY (`player_id`),
+  UNIQUE KEY `player_steam` (`player_steam`)
+) ENGINE=InnoDB AUTO_INCREMENT=228 DEFAULT CHARSET=latin1$$
