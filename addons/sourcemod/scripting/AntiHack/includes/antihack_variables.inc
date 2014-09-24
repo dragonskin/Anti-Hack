@@ -54,3 +54,5 @@ new bool:g_bCheckForUnicodeNames=true;
 new bool:bStillBlackhole[MAXPLAYERS];
 new Float:HoleLocation[custom_MAXWARDS][3];
 
+new Handle:h_AutosaveTime;
+
