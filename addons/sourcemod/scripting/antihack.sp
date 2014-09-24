@@ -67,14 +67,30 @@ public OnPluginStart()
 	RegConsoleCmd("say",          AH_SayCommand);
 	RegConsoleCmd("say_team",     AH_TeamSayCommand);
 
+	HookEvent("player_changename", Event_player_changename, EventHookMode_Pre);
+
 	g_hPotientalThreatWords = CreateArray(32);
 
+	h_antihack_ban=CreateConVar("antihack_ban","1","1 - Enabled / 0 - Disable\nAllow AntiHack to automatically choose certain bans.");
+
 	h_antihack_wordsearch_location=CreateConVar("antihack_wordsearch_location","configs/Potiental_Threat_Words.cfg","default location:\nconfigs/Potiental_Threat_Words.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
+
+	h_antihack_wordsearch_extremefilter=CreateConVar("antihack_wordsearch_extremefilter","0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
+
+	h_antihack_prevent_name_copying=CreateConVar("antihack_prevent_name_copying","1","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
 
 	ClientHUD = CreateHudSynchronizer();
 	CreateTimer(0.1,ClientAim,_,TIMER_REPEAT);
 
-	g_hCvarAimbotBan = FindConVar("smac_aimbot_ban", "0", "Number of aimbot detections before a player is banned. Minimum allowed is 4. (0 = Never ban)", FCVAR_PLUGIN, true, 0.0);
+	HookConVarChange(h_antihack_wordsearch_extremefilter,    ConVarChanged_ConVars);
+}
+
+public ConVarChanged_ConVars(Handle:convar, const String:oldValue[], const String:newValue[])
+{
+	if(convar      == h_antihack_wordsearch_extremefilter)
+		ExtremeFiltering = bool:StringToInt(newValue);
+	else if(convar == h_antihack_ban)
+		AllowBans = bool:StringToInt(newValue);
 }
 
 public OnMapStart()
@@ -86,6 +102,8 @@ public OnAllPluginsLoaded() //called once only, will not call again when map cha
 {
 	new smac_version = StringToInt(SMAC_VERSION);
 	if(smac_version < 0.8.5.1) then SetFailState("[AntiHack] You must have at least SMAC version 0.8.5.1 or higher.");
+
+	g_hCvarAimbotBan = FindConVar("smac_aimbot_ban");
 
 	PrintToServer("OnAllPluginsLoaded");
 
@@ -200,8 +218,8 @@ stock bool:ParseFile()
 
 public FilterType:filter_words(client, String:user_command[192])
 {
-	if (client) {
-
+	if (client)
+	{
 		//decl String:user_command[192];
 		//GetCmdArgString(user_command, 192);
 
@@ -210,152 +228,115 @@ public FilterType:filter_words(client, String:user_command[192])
 		// THIS PART NOT FINISHED YET.. STILL IN PROGRESS
 		// THIS PART NOT FINISHED YET.. STILL IN PROGRESS
 
+		FilterSentence(user_command,ExtremeFiltering);
 
-		FilterSentence(user_command);
+		new is_blocked_word=0;
 
-		//PrintToChat(client,"user_command:%s",user_command)
+		decl String:TmpStr[32];
+		for(new i = 0; i < GetArraySize(g_hPotientalThreatWords); i++)
+		{
+			GetArrayString(g_hPotientalThreatWords, i, TmpStr, sizeof(TmpStr));
 
-		new start_index = 0
-		new command_length = strlen(user_command);
-		if (command_length > 0) {
-			if (user_command[0] == 34)	{
-				start_index = 1;
-				if (user_command[command_length - 1] == 34)	{
-					user_command[command_length - 1] = 0;
+			if(ExtremeFiltering)
+			{
+				FilterSentence(TmpStr,ExtremeFiltering);
+			}
+
+			if(StrEqual(user_command,TmpStr))
+			{
+				is_blocked_word=1;
+				break;
+			}
+		}
+
+		if (word_blocked == 0) return AH_Filter_Normal;
+
+		if (word_blocked > 0 && Blocked_Players_ID[client]<=3)
+		{
+			if ((!IsFakeClient(client)) && (IsClientConnected(client)))
+			{
+
+				Blocked_Players_ID[client]++;
+
+				new String:player_name[64];
+				if (!GetClientName(client, player_name, 64))
+				{
+					strcopy(player_name, 64, "UNKNOWN");
 				}
-			}
 
-			if (user_command[start_index] == 47)	{
-				start_index++;
-			}
-
-			ReplaceString(user_command, 192, ".", "");
-			ReplaceString(user_command, 192, "-", "");
-			ReplaceString(user_command, 192, ";", "");
-			ReplaceString(user_command, 192, ":", "");
-			ReplaceString(user_command, 192, "/", "");
-
-			new command_blocked = is_bad_word(user_command[start_index]);
-			if (command_blocked > 0) {
-
-				if ((!IsFakeClient(client)) && (IsClientConnected(client))) {
-					new String:display_message[192];
-					Format(display_message, 192, "\x01 %s", "ERROR! Could not process message.");
-
-					new Handle:hBf;
-					hBf = StartMessageOne("SayText2", client);
-					if (hBf != INVALID_HANDLE) {
-						BfWriteByte(hBf, 1);
-						BfWriteByte(hBf, 0);
-						BfWriteString(hBf, display_message);
-						EndMessage();
-					}
-
-					new String:player_name[64];
-					if (!GetClientName(client, player_name, 64))	{
-						strcopy(player_name, 64, "UNKNOWN");
-					}
-
-					new String:player_authid[64];
-					if (!GetClientAuthString(client, player_authid, 64)){
-						strcopy(player_authid, 64, "UNKNOWN");
-					}
-
-					Convert_UniqueID_TO_SteamID(player_authid);
-
-					new player_team_index = GetClientTeam(client);
-					new String:player_team[64];
-					player_team = team_list[player_team_index];
-
-					new player_userid = GetClientUserId(client);
-					LogToGame("\"%s<%d><%s><%s>\" triggered \"bad_language\"", player_name, player_userid, player_authid, player_team);
-					LogMessage("\"%s<%d><%s><%s>\" triggered \"bad_language\"", player_name, player_userid, player_authid, player_team);
-
+				new String:player_authid[64];
+				if (!GetClientAuthString(client, player_authid, 64))
+				{
+					strcopy(player_authid, 64, "UNKNOWN");
 				}
-				return AH_Filter_Block;
-			}
 
-			new word_blocked = is_blocked_word(client, user_command[start_index]);
-			if (word_blocked > 0 && Blocked_Players_ID[client]<=3) {
-				if ((!IsFakeClient(client)) && (IsClientConnected(client))) {
+				Convert_UniqueID_TO_SteamID(player_authid);
 
-					Blocked_Players_ID[client]++;
+				new player_team_index = GetClientTeam(client);
+				new String:player_team[64];
+				player_team = team_list[player_team_index];
 
-					new String:player_name[64];
-					if (!GetClientName(client, player_name, 64))	{
-						strcopy(player_name, 64, "UNKNOWN");
-					}
+				new player_userid = GetClientUserId(client);
+				LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
+				LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
 
-					new String:player_authid[64];
-					if (!GetClientAuthString(client, player_authid, 64)){
-						strcopy(player_authid, 64, "UNKNOWN");
-					}
-
-					Convert_UniqueID_TO_SteamID(player_authid);
-
-					new player_team_index = GetClientTeam(client);
-					new String:player_team[64];
-					player_team = team_list[player_team_index];
-
-					new player_userid = GetClientUserId(client);
-					LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
-					LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
-
-					for(new r = 1; r <= MaxClients; r++)
+				for(new r = 1; r <= MaxClients; r++)
+				{
+					if (r>0 && r<=MaxClients && IsClientConnected(r) && IsClientInGame(r) && !IsFakeClient(r))
 					{
-						if (r>0 && r<=MaxClients && IsClientConnected(r) && IsClientInGame(r) && !IsFakeClient(r))
+						new AdminId:ident = GetUserAdmin(r);
+						if (GetAdminFlag(ident, Admin_Kick))
 						{
-							new AdminId:ident = GetUserAdmin(r);
-							if (GetAdminFlag(ident, Admin_Kick))
-							{
-								CPrintToChat(r,"{cyan}[WARNING] {crimson}%s {white}has %d more chances before they are banned for typing in a ban word! {cyan}Word was blocked and logged!", player_name, (3-Blocked_Players_ID[client]));
-							}
+							CPrintToChat(r,"{cyan}[WARNING] {crimson}%s {white}has %d more chances before AntiHack acts against them! {cyan}Word was blocked and logged!", player_name, (3-Blocked_Players_ID[client]));
 						}
 					}
 				}
-
-				return AH_Filter_Warning;
 			}
+			return AH_Filter_Warning;
+		}
 
-			if (word_blocked > 0 && Blocked_Players_ID[client]>3) {
-				if ((!IsFakeClient(client)) && (IsClientConnected(client))) {
+		if (word_blocked > 0 && Blocked_Players_ID[client]>3)
+		{
+			if ((!IsFakeClient(client)) && (IsClientConnected(client)))
+			{
 
-					new String:player_name[64];
-					if (!GetClientName(client, player_name, 64))	{
-						strcopy(player_name, 64, "UNKNOWN");
-					}
-
-					new String:player_authid[64];
-					if (!GetClientAuthString(client, player_authid, 64)){
-						strcopy(player_authid, 64, "UNKNOWN");
-					}
-
-					Convert_UniqueID_TO_SteamID(player_authid);
-
-					new player_team_index = GetClientTeam(client);
-					new String:player_team[64];
-					player_team = team_list[player_team_index];
-
-					PrintToChat(client,"YOU HAVE BEEN CAUGHT!!!");
-					PrintToChat(client,"YOU HAVE BEEN CAUGHT!!!");
-					PrintToChat(client,"YOU HAVE BEEN CAUGHT!!!");
-
-					new player_userid = GetClientUserId(client);
-					PrintToChat(client,"\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
-
-					LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
-					LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
-					//RegAdminCmd("sm_ban", CommandBan, ADMFLAG_BAN, "sm_ban <#userid|name> <minutes|0> [reason]", "sourcebans");
-					//RegAdminCmd("sm_addban", CommandAddBan, ADMFLAG_RCON, "sm_addban <time> <steamid> [reason]", "sourcebans");
-					//PrintToChat(client,"BAN");
-
-					KickClient(client, "YOU HAVE BEEN CAUGHT!!!");
-#if defined _sourcebans_included
-					ServerCommand("sm_addban 0 %s \"check antihack logs\"",player_authid);
-#endif
+				new String:player_name[64];
+				if (!GetClientName(client, player_name, 64))
+				{
+					strcopy(player_name, 64, "UNKNOWN");
 				}
-				return AH_Filter_Ban;
+
+				new String:player_authid[64];
+				if (!GetClientAuthString(client, player_authid, 64))
+				{
+					strcopy(player_authid, 64, "UNKNOWN");
+				}
+
+				Convert_UniqueID_TO_SteamID(player_authid);
+
+				new player_team_index = GetClientTeam(client);
+				new String:player_team[64];
+				player_team = team_list[player_team_index];
+
+				new player_userid = GetClientUserId(client);
+				PrintToChat(client,"\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
+
+				LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
+				LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
+				//RegAdminCmd("sm_ban", CommandBan, ADMFLAG_BAN, "sm_ban <#userid|name> <minutes|0> [reason]", "sourcebans");
+				//RegAdminCmd("sm_addban", CommandAddBan, ADMFLAG_RCON, "sm_addban <time> <steamid> [reason]", "sourcebans");
+				//PrintToChat(client,"BAN");
+
+#if defined _sourcebans_included
+				if(AllowBans)
+				{
+					SBBanPlayer(0, client, 0, "You win a free ban by AntiHack!");
+				}
+				//ServerCommand("sm_addban 0 %s \"check antihack logs\"",player_authid);
+#endif
+				KickClient(client, "CONGRATS!!! YOU WIN A...");
 			}
+			return AH_Filter_Ban;
 		}
 	}
 	return AH_Filter_Normal;
@@ -410,4 +391,84 @@ public Action:AH_TeamSayCommand(client,args)
 		}
 	}
 	return Plugin_Continue;
+}
+
+public Action:Event_player_changename(Handle:event,  const String:name[], bool:dontBroadcast)
+{
+	new userid = GetEventInt(event, "userid");
+	new client = GetClientOfUserId(userid);
+
+	new String:sNewName[132];
+
+	GetEventString(event, "newname", sNewName, 131);
+
+	if(ValidPlayer(client) && !IsFakeClient(client))
+	{
+		if(TrackNameChangesTriggered[client]==true)
+		{
+			new String:sNameBuffer[138];
+			IntToString(userid, sNameBuffer, sizeof(sNameBuffer));
+			if(!StrEqual(sNewName,sNameBuffer))
+			{
+				//Sv_namechange_cooldown_seconds
+				//ServerCommand("sm_rcon sm_rename \"%s\" \"%s\"",sNewName,sTmpName);
+
+				ServerCommand("sm_rcon sv_namechange_cooldown_seconds 0");
+				Format(sNameBuffer,137,"UserID-%s",sNameBuffer);
+				SetClientInfo(client, "name", sNameBuffer);
+
+				CreateTimer(1.0,StopAllNameChanging,_);
+				SetEventBroadcast(event, true);
+			}
+			return Plugin_Continue;
+		}
+		if(!IsClientNameValid(client) && TrackNameChangesTriggered[client]==false)
+		{
+			// PRINT INFO TO CHAT
+			new String:steamid[64];
+			GetClientAuthString(client, steamid, sizeof(steamid));
+			//CPrintToChatAll("{cyan}Name Change: {crimson}%s {deeppink}%s",sNewName,steamid);
+			TrackNameChanges[client]++;
+		}
+		if(TrackNameChanges[client]>2 && GetConVarInt(s_enable)>0 && TrackNameChangesTriggered[client]==false)
+		{
+			new String:steamid[64];
+			GetClientAuthString(client, steamid, sizeof(steamid));
+			CPrintToChatAll("{cyan}Unicode Name Change: {crimson}%s {deeppink}%s",sNewName,steamid);
+
+			//SetPlayerSpawnCamper(client);
+			AHSetHackerProp(client,bIsHacker,true);
+			AHSetHackerProp(client,bAntiAimbot,true);
+			//W3AntiHackerNotifyAdmins(const String:fmt[],any:...);
+			AHAntiHackerLog("%s %s set to AntiAimbot for changing Unicode name too many times!",sNewName,steamid);
+
+
+			CPrintToChatAll("{cyan}%s has changed his/her name too many times.",sNewName);
+			CPrintToChatAll("{cyan}AntiHack gives him/her a permenant name.");
+
+			new String:sNameBuffer[138];
+			IntToString(userid, sNameBuffer, sizeof(sNameBuffer));
+
+
+			ServerCommand("sm_rcon sv_namechange_cooldown_seconds 0");
+			Format(sNameBuffer,137,"UserID-%s",sNameBuffer);
+			SetClientInfo(client, "name", sNameBuffer);
+
+			CPrintToChatAll("{deeppink}%s User's name will now be: %s",sNewName,sNameBuffer);
+
+			CreateTimer(1.0,StopAllNameChanging,_);
+
+			Log("Set To AntiAimbot: %s UserID-%s STEAMID: %s",sNewName,sNameBuffer,steamid);
+
+			TrackNameChangesTriggered[client]=true;
+		}
+	}
+	return Plugin_Continue;
+}
+
+public Action:StopAllNameChanging( Handle:timer, any:client )
+{
+	ServerCommand("sm_rcon sv_namechange_cooldown_seconds 20");
+	new userid = GetClientUserId(client);
+	ServerCommand("sm_crashclient_2 #%d",userid);
 }
