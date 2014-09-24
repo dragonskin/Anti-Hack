@@ -230,10 +230,10 @@ stock bool:GameCOLOR()
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 
-stock FilterSentence(String:message[192]) {
-	new charMax = strlen(message);
-	new charIndex;
-	new copyPos = 0;
+stock FilterSentence(String:message[],bool:extremefilter=false) {
+	decl charMax = strlen(message);
+	decl charIndex;
+	decl copyPos = 0;
 
 	new String:strippedString[192];
 
@@ -244,10 +244,18 @@ stock FilterSentence(String:message[192]) {
 			break;
 		}
 
-		// Found a normal character. Copy.
-		if (IsNormalCharacter(message[charIndex])) {
+		if(extremefilter && IsAlphaNumeric(message[charIndex]))
+		{
 			strippedString[copyPos] = message[charIndex];
 			copyPos++;
+			continue;
+		}
+
+		// Found a normal character. Copy.
+		if (!extremefilter && IsNormalCharacter(message[charIndex])) {
+			strippedString[copyPos] = message[charIndex];
+			copyPos++;
+			continue;
 		}
 	}
 
@@ -255,8 +263,14 @@ stock FilterSentence(String:message[192]) {
 	strcopy(message, 192, strippedString);
 }
 
+stock bool:IsAlphaNumeric(characterNum) {
+	return ((characterNum >= 48 && characterNum <=57)
+		||  (characterNum >= 65 && characterNum <=90)
+		||  (characterNum >= 97 && characterNum <=122));
+}
+
 stock bool:IsNormalCharacter(characterNum) {
-	return (characterNum 31 && characterNum < 127);
+	return (characterNum > 31 && characterNum < 127);
 }
 
 stock is_blocked_word(client, String: command[])

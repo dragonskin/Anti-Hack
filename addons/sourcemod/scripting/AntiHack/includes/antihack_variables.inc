@@ -27,6 +27,8 @@ new HistoryCount=0;
 new Float:CachedAngle[MAXPLAYERS + 1][MaxHistory][3];
 new Float:CachedPos[MAXPLAYERS + 1][MaxHistory][3];
 
+new Blocked_Players_ID[MAXPLAYERS + 1];
+
 new g_iAimDetections[MAXPLAYERS+1];
 
 new Handle:g_hCvarAimbotBan = INVALID_HANDLE;
@@ -35,6 +37,15 @@ new Handle:g_hPotientalThreatWords = INVALID_HANDLE;
 
 new Handle:h_antihack_wordsearch_location = INVALID_HANDLE;
 
+new Hanlde:h_antihack_wordsearch_extremefilter = INVALID_HANDLE;
+new bool:ExtremeFiltering=false;
+
+new Handle:h_antihack_ban = INVALID_HANDLE;
+new bool:AllowBans=true;
 
 new Handle:g_hOnAHSayCommandFilter;
 
+
+new TrackNameChanges[MAXPLAYERS+1];
+new bool:TrackNameChangesTriggered[MAXPLAYERS+1];
+new String:sOldName[MAXPLAYERS+1][64];
