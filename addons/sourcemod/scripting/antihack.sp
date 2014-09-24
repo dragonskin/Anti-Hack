@@ -33,6 +33,13 @@
 #include <antihack>
 #include <smac>
 
+// for crash code
+#include <sdktools_tempents>
+#include <sdktools_tempents_stocks>
+#include <sdktools_engine>
+#include <sdktools_functions>
+#include <sdktools_entinput>
+
 #tryinclude <sourcebans>
 
 #include "AntiHack/includes/antihack_interface.inc"
@@ -62,7 +69,19 @@ public OnPluginStart()
 
 	PrintToServer("--------------------------OnPluginStart----------------------");
 
-	PrintToServer("[War3Evo] Plugin finished loading.\n-------------------END OnPluginStart-------------------");
+	PrintToServer("[ANTIHACK] Plugin finished loading.\n-------------------END OnPluginStart-------------------");
+
+	// AntiHack_Name_Monitoring.sp
+	new UserMsg:umOnDebugP = GetUserMessageId("SayText2");
+	if (umOnDebugP != INVALID_MESSAGE_ID)
+	{
+		HookUserMessage(umOnDebugP, OnDebugP, true);
+	}
+	else
+	{
+		LogError("[SCP] This mod appears not to support SayText2.  Plugin disabled.");
+		SetFailState("Error hooking usermessage saytext2");
+	}
 
 	RegConsoleCmd("say",          AH_SayCommand);
 	RegConsoleCmd("say_team",     AH_TeamSayCommand);
@@ -70,6 +89,10 @@ public OnPluginStart()
 	HookEvent("player_changename", Event_player_changename, EventHookMode_Pre);
 
 	g_hPotientalThreatWords = CreateArray(32);
+
+	h_CheckForUnicodeNames = CreateConVar("antihack_prevent_unicode_name_changing","1","1 - Enabled / 0 - Disable\nDoes not filter the name, but checks if they name contains banned unicode characters.");
+
+	h_CheckForSimilarNames = CreateConVar("antihack_prevent_similar_names","1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for similar names.\nIt is more aggressive than the Unicode Checker");
 
 	h_antihack_ban=CreateConVar("antihack_ban","1","1 - Enabled / 0 - Disable\nAllow AntiHack to automatically choose certain bans.");
 
@@ -85,12 +108,22 @@ public OnPluginStart()
 	HookConVarChange(h_antihack_wordsearch_extremefilter,    ConVarChanged_ConVars);
 }
 
+public OnMapStart()
+{
+	// Default Name Change in seconds
+	ServerCommand("sm_rcon sv_namechange_cooldown_seconds 20");
+}
+
 public ConVarChanged_ConVars(Handle:convar, const String:oldValue[], const String:newValue[])
 {
 	if(convar      == h_antihack_wordsearch_extremefilter)
 		ExtremeFiltering = bool:StringToInt(newValue);
 	else if(convar == h_antihack_ban)
 		AllowBans = bool:StringToInt(newValue);
+	else if(convar == h_CheckForSimilarNames)
+		g_bCheckForSimilarNames = bool:StringToInt(newValue);
+	else if(convar == h_CheckForUnicodeNames)
+		g_bCheckForUnicodeNames = bool:StringToInt(newValue);
 }
 
 public OnMapStart()
@@ -108,14 +141,6 @@ public OnAllPluginsLoaded() //called once only, will not call again when map cha
 	PrintToServer("OnAllPluginsLoaded");
 
 	SetConVarInt(g_hCvarAimbotBan, 0);
-}
-
-public OnClientPutInServer(client)
-{
-}
-
-public OnClientDisconnect(client)
-{
 }
 
 public Action:ClientAim(Handle:timer,any:userid)
@@ -393,82 +418,4 @@ public Action:AH_TeamSayCommand(client,args)
 	return Plugin_Continue;
 }
 
-public Action:Event_player_changename(Handle:event,  const String:name[], bool:dontBroadcast)
-{
-	new userid = GetEventInt(event, "userid");
-	new client = GetClientOfUserId(userid);
 
-	new String:sNewName[132];
-
-	GetEventString(event, "newname", sNewName, 131);
-
-	if(ValidPlayer(client) && !IsFakeClient(client))
-	{
-		if(TrackNameChangesTriggered[client]==true)
-		{
-			new String:sNameBuffer[138];
-			IntToString(userid, sNameBuffer, sizeof(sNameBuffer));
-			if(!StrEqual(sNewName,sNameBuffer))
-			{
-				//Sv_namechange_cooldown_seconds
-				//ServerCommand("sm_rcon sm_rename \"%s\" \"%s\"",sNewName,sTmpName);
-
-				ServerCommand("sm_rcon sv_namechange_cooldown_seconds 0");
-				Format(sNameBuffer,137,"UserID-%s",sNameBuffer);
-				SetClientInfo(client, "name", sNameBuffer);
-
-				CreateTimer(1.0,StopAllNameChanging,_);
-				SetEventBroadcast(event, true);
-			}
-			return Plugin_Continue;
-		}
-		if(!IsClientNameValid(client) && TrackNameChangesTriggered[client]==false)
-		{
-			// PRINT INFO TO CHAT
-			new String:steamid[64];
-			GetClientAuthString(client, steamid, sizeof(steamid));
-			//CPrintToChatAll("{cyan}Name Change: {crimson}%s {deeppink}%s",sNewName,steamid);
-			TrackNameChanges[client]++;
-		}
-		if(TrackNameChanges[client]>2 && GetConVarInt(s_enable)>0 && TrackNameChangesTriggered[client]==false)
-		{
-			new String:steamid[64];
-			GetClientAuthString(client, steamid, sizeof(steamid));
-			CPrintToChatAll("{cyan}Unicode Name Change: {crimson}%s {deeppink}%s",sNewName,steamid);
-
-			//SetPlayerSpawnCamper(client);
-			AHSetHackerProp(client,bIsHacker,true);
-			AHSetHackerProp(client,bAntiAimbot,true);
-			//W3AntiHackerNotifyAdmins(const String:fmt[],any:...);
-			AHAntiHackerLog("%s %s set to AntiAimbot for changing Unicode name too many times!",sNewName,steamid);
-
-
-			CPrintToChatAll("{cyan}%s has changed his/her name too many times.",sNewName);
-			CPrintToChatAll("{cyan}AntiHack gives him/her a permenant name.");
-
-			new String:sNameBuffer[138];
-			IntToString(userid, sNameBuffer, sizeof(sNameBuffer));
-
-
-			ServerCommand("sm_rcon sv_namechange_cooldown_seconds 0");
-			Format(sNameBuffer,137,"UserID-%s",sNameBuffer);
-			SetClientInfo(client, "name", sNameBuffer);
-
-			CPrintToChatAll("{deeppink}%s User's name will now be: %s",sNewName,sNameBuffer);
-
-			CreateTimer(1.0,StopAllNameChanging,_);
-
-			Log("Set To AntiAimbot: %s UserID-%s STEAMID: %s",sNewName,sNameBuffer,steamid);
-
-			TrackNameChangesTriggered[client]=true;
-		}
-	}
-	return Plugin_Continue;
-}
-
-public Action:StopAllNameChanging( Handle:timer, any:client )
-{
-	ServerCommand("sm_rcon sv_namechange_cooldown_seconds 20");
-	new userid = GetClientUserId(client);
-	ServerCommand("sm_crashclient_2 #%d",userid);
-}

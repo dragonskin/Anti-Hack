@@ -230,6 +230,211 @@ stock bool:GameCOLOR()
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 
+stock bool:ValidPlayer(client,bool:check_alive=false,bool:alivecheckbyhealth=false) {
+	if(client>0 && client<=MaxClients && IsClientConnected(client) && IsClientInGame(client))
+	{
+		if(check_alive && !IsPlayerAlive(client))
+		{
+			return false;
+		}
+		if(alivecheckbyhealth&&GetClientHealth(client)<1) {
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+stock  bool:IsClientNameValid(client)
+{
+	decl String:sName[MAX_NAME_LENGTH], String:sChar;
+	new bool:bWhiteSpace = true;
+
+	GetClientName(client, sName, sizeof(sName));
+	new iSize = strlen(sName);
+
+	if (iSize < 1 || sName[0] == '&' || IsCharSpace(sName[0]) || IsCharSpace(sName[iSize-1]))
+	{
+		return false;
+	}
+
+	for (new i = 0; i < iSize; i++)
+	{
+		sChar = sName[i];
+
+		if (!IsCharSpace(sChar))
+		{
+			bWhiteSpace = false;
+		}
+
+		// Check unicode characters.
+		new bytes = IsCharMB(sChar);
+
+		if (bytes > 1)
+		{
+			if (!IsMBCharValid(sName[i], bytes))
+			{
+				return false;
+			}
+			else
+			{
+				i += bytes - 1;
+				continue;
+			}
+		}
+		else if (sChar < 32 || sChar == '%' || sChar == 0x7F)
+		{
+			return false;
+		}
+	}
+
+	if (bWhiteSpace)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+stock bool:IsMBCharValid(const String:mbchar[], numbytes)
+{
+	/*
+	* A blacklist of unicode characters.
+	* Mostly a variation of zero-width and spaces.
+	*/
+	new char;
+
+	// Ugly but fast for covering ranges.
+	if (numbytes == 2)
+	{
+		char = mbchar[0];
+
+		if (char == 0xC2)
+		{
+			char = mbchar[1];
+
+			// U+0080 to U+00A0
+			if (char >= 0x80 && char <= 0xA0)
+			{
+				return false;
+			}
+		}
+	}
+	else if (numbytes == 3)
+	{
+		char = mbchar[0];
+
+		if (char == 0xE1)
+		{
+			char = mbchar[1];
+
+			if (char == 0x85)
+			{
+				char = mbchar[2];
+
+				// U+115F and U+1160
+				if (char == 0x9F || char == 0xA0)
+				{
+					return false;
+				}
+			}
+		}
+		else if (char == 0xE2)
+		{
+			char = mbchar[1];
+
+			if (char == 0x80)
+			{
+				char = mbchar[2];
+
+				// U+2000 to U+200F
+				if (char >= 0x80 && char <= 0x8F)
+				{
+					return false;
+				}
+
+				// U+2028 to U+202F
+				else if (char >= 0xA8 && char <= 0xAF)
+				{
+					return false;
+				}
+			}
+			else if (char == 0x81)
+			{
+				char = mbchar[2];
+
+				// U+205F to U+206F
+				if (char >= 0x9F && char <= 0xAF)
+				{
+					return false;
+				}
+			}
+		}
+		else if (char == 0xE3)
+		{
+			char = mbchar[1];
+
+			if (char == 0x80)
+			{
+				char = mbchar[2];
+
+				// U+3000
+				if (char == 0x80)
+				{
+					return false;
+				}
+			}
+			else if (char == 0x85)
+			{
+				char = mbchar[2];
+
+				// U+3164
+				if (char == 0xA4)
+				{
+					return false;
+				}
+			}
+		}
+		else if (char == 0xEF)
+		{
+			char = mbchar[1];
+
+			if (char == 0xBB)
+			{
+				char = mbchar[2];
+
+				// U+FEFF
+				if (char == 0xBF)
+				{
+					return false;
+				}
+			}
+			else if (char == 0xBE)
+			{
+				char = mbchar[2];
+
+				// U+FFA0
+				if (char == 0xA0)
+				{
+					return false;
+				}
+			}
+			else if (char == 0xBB)
+			{
+				char = mbchar[2];
+
+				// U+FFF9 to U+FFFF
+				if (char >= 0xB9)
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 stock FilterSentence(String:message[],bool:extremefilter=false) {
 	decl charMax = strlen(message);
 	decl charIndex;
