@@ -43,7 +43,7 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 	{
 		if(g_bCheckForSimilarNames)
 		{
-			GetClientName(i,sTestName1,sizeof(sTestName1));
+			GetClientName(client,sTestName1,sizeof(sTestName1));
 
 			FilterSentence(sTestName1);
 
@@ -110,7 +110,7 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 				//CPrintToChatAll("{cyan}Name Change: {crimson}%s {deeppink}%s",sNewName,steamid);
 				TrackNameChanges[client]++;
 			}
-			if(TrackNameChanges[client]>2 && GetConVarInt(s_enable)>0 && TrackNameChangesTriggered[client]==false)
+			if(TrackNameChanges[client]>2 && TrackNameChangesTriggered[client]==false)
 			{
 				new String:steamid[64];
 				GetClientAuthString(client, steamid, sizeof(steamid));
@@ -120,7 +120,7 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 				AHSetHackerProp(client,bIsHacker,true);
 				AHSetHackerProp(client,bAntiAimbot,true);
 				//AHAntiHackerNotifyAdmins(const String:fmt[],any:...);
-				AHAntiHackerLog("%s %s set to AntiAimbot for changing Unicode name too many times!",sNewName,steamid);
+				AntiHackLog("%s %s set to AntiAimbot for changing Unicode name too many times!",sNewName,steamid);
 
 
 				CPrintToChatAll("{cyan}%s has changed his/her name too many times.",sNewName);
@@ -138,7 +138,7 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 
 				CreateTimer(1.0,StopAllNameChanging,_);
 
-				Log("Set To AntiAimbot: %s UserID-%s STEAMID: %s",sNewName,sNameBuffer,steamid);
+				AntiHackLog("Set To AntiAimbot: %s UserID-%s STEAMID: %s",sNewName,sNameBuffer,steamid);
 
 				TrackNameChangesTriggered[client]=true;
 			}
