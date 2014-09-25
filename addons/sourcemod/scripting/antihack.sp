@@ -42,11 +42,16 @@
 
 #tryinclude <sourcebans>
 
-#include "AntiHack/includes/antihack_interface.inc"
+#include "AntiHack/include/antihack_interface.inc"
 
 #include "AntiHack/AntiHack_000_Natives.sp"
+#include "AntiHack/AntiHack_000_OnClientConnected.sp"
+#include "AntiHack/AntiHack_000_OnClientDisconnect.sp"
+#include "AntiHack/AntiHack_000_OnClientPutInServer.sp"
 #include "AntiHack/AntiHack_000_OnGameFrame.sp"
-#include "AntiHack/AntiHack_Aim_Calculations.sp"
+#include "AntiHack/AntiHack_Configuration.sp"
+#include "AntiHack/AntiHack_Crash_Code.sp"
+#include "AntiHack/AntiHack_Name_Monitoring.sp"
 //#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
@@ -90,53 +95,37 @@ public OnPluginStart()
 
 	g_hPotientalThreatWords = CreateArray(32);
 
-	h_AutosaveTime=CreateConVar("antihacker_autosavetime","300.0");
-
-	h_CheckForUnicodeNames = CreateConVar("antihack_prevent_unicode_name_changing","1","1 - Enabled / 0 - Disable\nDoes not filter the name, but checks if they name contains banned unicode characters.");
-
-	h_CheckForSimilarNames = CreateConVar("antihack_prevent_similar_names","1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for similar names.\nIt is more aggressive than the Unicode Checker");
-
-	h_antihack_ban=CreateConVar("antihack_ban","1","1 - Enabled / 0 - Disable\nAllow AntiHack to automatically choose certain bans.");
-
-	h_antihack_wordsearch_location=CreateConVar("antihack_wordsearch_location","configs/Potiental_Threat_Words.cfg","default location:\nconfigs/Potiental_Threat_Words.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
-
-	h_antihack_wordsearch_extremefilter=CreateConVar("antihack_wordsearch_extremefilter","0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
-
-	h_antihack_prevent_name_copying=CreateConVar("antihack_prevent_name_copying","1","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
-
 	ClientHUD = CreateHudSynchronizer();
 	CreateTimer(0.1,ClientAim,_,TIMER_REPEAT);
 
-	HookConVarChange(h_antihack_wordsearch_extremefilter,    ConVarChanged_ConVars);
+	AntiHack_Configuration_OnPluginStart();
 }
 
 public OnMapStart()
 {
 	// Default Name Change in seconds
-	ServerCommand("sm_rcon sv_namechange_cooldown_seconds 20");
-}
-
-public ConVarChanged_ConVars(Handle:convar, const String:oldValue[], const String:newValue[])
-{
-	if(convar      == h_antihack_wordsearch_extremefilter)
-		ExtremeFiltering = bool:StringToInt(newValue);
-	else if(convar == h_antihack_ban)
-		AllowBans = bool:StringToInt(newValue);
-	else if(convar == h_CheckForSimilarNames)
-		g_bCheckForSimilarNames = bool:StringToInt(newValue);
-	else if(convar == h_CheckForUnicodeNames)
-		g_bCheckForUnicodeNames = bool:StringToInt(newValue);
-}
-
-public OnMapStart()
-{
 	PrintToServer("OnMapStart");
+	ServerCommand("sm_rcon sv_namechange_cooldown_seconds 20");
 }
 
 public OnAllPluginsLoaded() //called once only, will not call again when map changes
 {
-	new smac_version = StringToInt(SMAC_VERSION);
-	if(smac_version < 0.8.5.1) then SetFailState("[AntiHack] You must have at least SMAC version 0.8.5.1 or higher.");
+	new Handle:smac_version = FindConVar("smac_aimbot_ban");
+
+	if(smac_version!=INVALID_HANDLE)
+	{
+		new String:TmpString[32];
+		GetConVarString(smac_version, TmpString, sizeof(TmpString));
+		CloseHandle(smac_version);
+		if(!StrEqual(TmpString,"0.8.5.1")) LogMessage("[AntiHack] Anti-Hack has only been tested on SMAC version 0.8.5.1, using any other version may cause problems.");
+	}
+	else
+	{
+		CloseHandle(smac_version);
+		SetFailState("[AntiHack] AntiHack Requires SMACS to function.");
+		CloseHandle(smac_version);
+	}
+	CloseHandle(smac_version);
 
 	g_hCvarAimbotBan = FindConVar("smac_aimbot_ban");
 
@@ -144,14 +133,14 @@ public OnAllPluginsLoaded() //called once only, will not call again when map cha
 
 	SetConVarInt(g_hCvarAimbotBan, 0);
 
-	CreateTimer(GetConVarFloat(m_AutosaveTime),DoAutosave);
+	//CreateTimer(GetConVarFloat(h_AutosaveTime),DoAutosave);
 }
 
 public Action:ClientAim(Handle:timer,any:userid)
 {
 	for(new client=1;client<=MaxClients;client++)
 	{
-		if(IsValidPlayer(client))
+		if(ValidPlayer(client))
 		{
 			SetHudTextParams(-1.0, 0.20, 0.1, 255, 0, 0, 255);
 			ShowSyncHudText(client, ClientHUD, " Angles: [%.2f] [%.2f] [%.2f] ",CachedAngle[client][0],CachedAngle[client][1],CachedAngle[client][2]);
@@ -173,13 +162,13 @@ public Native_AH_CachedPosition(Handle:plugin,numParams)
 
 public Action:SMAC_OnCheatDetected(client, const String:module[], DetectionType:type, Handle:info)
 {
-	if(IsValidPlayer(client))
+	if(ValidPlayer(client))
 	{
 		switch (type)
 		{
-			case:Detection_Aimbot
+			case Detection_Aimbot:
 			{
-				g_iAimDetections[client]++;
+				++g_iAimDetections[client];
 				IncreaseAimBotCount(client);
 
 				return Plugin_Handled;
@@ -200,49 +189,6 @@ public Action:Timer_DecreaseCount(Handle:timer, any:userid)
 	}
 
 	return Plugin_Stop;
-}
-
-
-stock bool:ParseFile()
-{
-	decl String:path[1024],String:vip_map_file_path[1024];
-
-	GetConVarString(h_vip_matvote_location, vip_map_file_path, sizeof(vip_map_file_path));
-
-	BuildPath(Path_SM,path,sizeof(path),vip_map_file_path);
-
-	/* Return true if an update was available. */
-	new Handle:kv = CreateKeyValues("AntiHack");
-
-	if (!FileToKeyValues(kv, path))
-	{
-		CloseHandle(kv);
-		return false;
-	}
-
-	ClearArray(g_hMapNames);
-
-	new String:sBuffer[32];
-
-	if (KvJumpToKey(kv, "WordsSearch"))
-	{
-		if (KvGotoFirstSubKey(kv, false))
-		{
-			do
-			{
-				KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
-				AddStringOnly(g_hPotientalThreatWords,sBuffer);
-
-			} while (KvGotoNextKey(kv, false));
-			KvGoBack(kv);
-		}
-
-		KvGoBack(kv);
-	}
-
-	CloseHandle(kv);
-
-	return true;
 }
 
 public FilterType:filter_words(client, String:user_command[192])
@@ -278,9 +224,9 @@ public FilterType:filter_words(client, String:user_command[192])
 			}
 		}
 
-		if (word_blocked == 0) return AH_Filter_Normal;
+		if (is_blocked_word == 0) return AH_Filter_Normal;
 
-		if (word_blocked > 0 && Blocked_Players_ID[client]<=3)
+		if (is_blocked_word > 0 && Blocked_Players_ID[client]<=3)
 		{
 			if ((!IsFakeClient(client)) && (IsClientConnected(client)))
 			{
@@ -303,11 +249,11 @@ public FilterType:filter_words(client, String:user_command[192])
 
 				new player_team_index = GetClientTeam(client);
 				new String:player_team[64];
-				player_team = team_list[player_team_index];
+				strcopy(player_team, sizeof(player_team), Team_List[player_team_index]);
 
 				new player_userid = GetClientUserId(client);
-				LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
-				LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
+				LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command);
+				LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command);
 
 				for(new r = 1; r <= MaxClients; r++)
 				{
@@ -324,7 +270,7 @@ public FilterType:filter_words(client, String:user_command[192])
 			return AH_Filter_Warning;
 		}
 
-		if (word_blocked > 0 && Blocked_Players_ID[client]>3)
+		if (is_blocked_word > 0 && Blocked_Players_ID[client]>3)
 		{
 			if ((!IsFakeClient(client)) && (IsClientConnected(client)))
 			{
@@ -345,13 +291,13 @@ public FilterType:filter_words(client, String:user_command[192])
 
 				new player_team_index = GetClientTeam(client);
 				new String:player_team[64];
-				player_team = team_list[player_team_index];
+				strcopy(player_team, sizeof(player_team), Team_List[player_team_index]);
 
 				new player_userid = GetClientUserId(client);
-				PrintToChat(client,"\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
+				PrintToChat(client,"\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command);
 
-				LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
-				LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command[start_index]);
+				LogToGame("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command);
+				LogMessage("\"%s<%d><%s><%s>\" say \"%s\"", player_name, player_userid, player_authid, player_team, user_command);
 				//RegAdminCmd("sm_ban", CommandBan, ADMFLAG_BAN, "sm_ban <#userid|name> <minutes|0> [reason]", "sourcebans");
 				//RegAdminCmd("sm_addban", CommandAddBan, ADMFLAG_RCON, "sm_addban <time> <steamid> [reason]", "sourcebans");
 				//PrintToChat(client,"BAN");
