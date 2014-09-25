@@ -91,7 +91,7 @@ public Action:Timer_BlackHoleLoop( Handle:timer, any:client )
 		origin[2]+5;
 		if(GetVectorDistance(VictimPos,origin) < 500.0)
 		{
-			PushClientToVector(client, origin, 0.8);
+			PushEntToVector(client, origin, 0.8);
 		}
 	}
 }
