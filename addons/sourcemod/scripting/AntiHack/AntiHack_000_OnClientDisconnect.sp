@@ -7,5 +7,6 @@ public OnClientDisconnect(client)
 		TrackNameChanges[client]=0;
 		TrackNameChangesTriggered[client]=false;
 	}
+	AH_Database_OnClientDisconnect(client);
 }
 

@@ -44,6 +44,10 @@ enum AHHackerProp
 	iChangingTimerCount,
 	iRewritingMovementCommandsCount,
 	iChangingViewAnglesAimbotCount,
+	iTamperingButtonsCount,
+	iTamperingTickcountCount,
+	iReusingMovementCommandsCount,
+	iTamperingViewAnglesAimbotCount,
 	iCrashed
 }
 
@@ -107,6 +111,10 @@ native AH_CachedPosition(client,Float:position[3]);
 
 native AHSetHackerProp(client,AHHackerProp:property,any:value);
 native any:AHGetHackerProp(client,AHHackerProp:property);
+
+// 128 character max
+native AHSetHackerComment(client,String:ssComment[]);
+native AHGetHackerComment(client,String:ssComment[],maxlen);
 
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS

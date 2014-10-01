@@ -29,6 +29,9 @@ new g_iAimDetections[MAXPLAYERS+1];
 
 new Handle:g_hCvarAimbotBan = INVALID_HANDLE;
 
+// SMACS
+new bool:SMACS_AIMBOT_DETECTED=false;
+
 // word filtering system
 new Blocked_Players_ID[MAXPLAYERS + 1];
 new Handle:g_hPotientalThreatWords;
@@ -59,5 +62,21 @@ new Float:HoleLocation[MAXPLAYERS + 1][3];
 
 new Handle:h_AutosaveTime;
 
-new Handle:h_DatabaseName;
+// Database
+new Handle:hDB; // the database handle
+new Handle:h_DatabaseName; // used for configurations
 new String:g_sDatabaseName[32]={"antihack"};
+new AntiHackSQLType:g_SQLType;
+new bool:CanLoadDataBase=false;
+
+// Saving Stuff
+new Float:g_fAutosaveTime=300.0;
+new Handle:h_SaveEnabled;
+new bool:g_bSaveEnabled=true;
+
+// Libraries
+new bool:ircrelay_exists=false;
+
+// Player Properties
+new p_properties[MAXPLAYERS+1][AHHackerProp];
+new String:p_properties_comment[MAXPLAYERS+1][300];

@@ -13,6 +13,12 @@ public bool:AHInitNativesForwards()
 		//return false;
 	//}
 
+	CreateNative("AHSetHackerProp",Native_AHSetHackerProp);
+	CreateNative("AHGetHackerProp",Native_AHGetHackerProp);
+
+	CreateNative("AHSetHackerComment",Native_AHSetHackerComment);
+	CreateNative("AHGetHackerComment",Native_AHGetHackerComment);
+
 	CreateNative("AH_CachedAngle",Native_AH_CachedAngle);
 	CreateNative("AH_CachedPosition",Native_AH_CachedPosition);
 
@@ -21,4 +27,37 @@ public bool:AHInitNativesForwards()
 	g_hOnAHTeamSayCommandFilter       = CreateGlobalForward("OnAHTeamSayCommandFilter", ET_Hook, Param_Cell, Param_String, Param_String);
 
 	return true;
+}
+
+public Native_AHSetHackerProp(Handle:plugin,numParams)
+{
+	internal_AHSetHackerProp(GetNativeCell(1),AHHackerProp:GetNativeCell(2),GetNativeCell(3));
+}
+
+public Native_AHGetHackerProp(Handle:plugin,numParams)
+{
+	return internal_AHGetHackerProp(GetNativeCell(1),AHHackerProp:GetNativeCell(2));
+}
+
+public Native_AHSetHackerComment(Handle:plugin,numParams){
+	new client=GetNativeCell(1);
+	if (client > 0 && client <= MaxClients)
+	{
+		new String:sCommentTemp[300];
+		GetNativeString(2,sCommentTemp,sizeof(sCommentTemp));
+
+		internal_AHSetHackerComment(client,sCommentTemp);
+	}
+}
+public Native_AHGetHackerComment(Handle:plugin,numParams){
+	new client=GetNativeCell(1);
+	if (client > 0 && client <= MaxClients)
+	{
+		new maxlen=GetNativeCell(3);
+		new String:TmpString[maxlen];
+
+		internal_AHGetHackerComment(client,TmpString,maxlen);
+
+		SetNativeString(2,TmpString,maxlen);
+	}
 }

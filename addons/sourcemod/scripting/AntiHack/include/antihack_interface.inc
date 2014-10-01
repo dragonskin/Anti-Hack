@@ -30,6 +30,7 @@
 #include <sdktools_functions>
 
 #tryinclude <morecolors>
+#tryinclude <ircrelay>
 
 #include "AntiHack/include/antihack_variables.inc"
 #include "AntiHack/include/antihack_constants.inc"
@@ -229,6 +230,35 @@ stock bool:GameCOLOR()
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+
+stock internal_AHSetHackerComment(client,String:ssComment[])
+{
+	strcopy(p_properties_comment[client], 299, ssComment);
+}
+
+stock internal_AHGetHackerComment(client,String:ssComment[],maxlen)
+{
+	return strcopy(ssComment, maxlen, p_properties_comment[client]);
+}
+
+stock internal_AHSetHackerProp(client,AHHackerProp:AHproperty,any:SetProp)
+{
+	if (client > 0 && client <= MaxClients)
+	{
+		p_properties[client][AHproperty]=SetProp;
+	}
+}
+
+stock any:internal_AHGetHackerProp(client,AHHackerProp:AHproperty)
+{
+	if (client > 0 && client <= MaxClients)
+	{
+		return p_properties[client][AHproperty];
+	}
+	else
+		return 0;
+}
+
 stock Convert_SteamID_TO_UniqueID(String:sIDinfo[64])
 {
 	if(StrContains(sIDinfo,"STEAM_")>-1)
@@ -314,13 +344,18 @@ stock NotifyAdmins(const String:reason[]="", any:...)
 	{
 		if (IsClientInGame(r) && CheckCommandAccess(r, "smac_admin_notices", ADMFLAG_GENERIC, true))
 		{
-			CPrintToChat2(r,"{red}[ANTIHACK] %s", LogThis);
+			CPrintToChat(r,"{red}[ANTIHACK] %s", LogThis);
 		}
 	}
 
-	// Relay admin notice to IRC.
-	Format(LogThis, sizeof(LogThis), "[IRC-ANTIHACK] %s", LogThis);
-	IRC_Broadcast(IrcChannel_Private, LogThis);
+#if defined _ircrelay_included
+	if(ircrelay_exists)
+	{
+		// Relay admin notice to IRC.
+		Format(LogThis, sizeof(LogThis), "[IRC-ANTIHACK] %s", LogThis);
+		IRC_Broadcast(IrcChannel_Private, LogThis);
+	}
+#endif
 }
 
 stock bool:ValidPlayer(client,bool:check_alive=false,bool:alivecheckbyhealth=false) {

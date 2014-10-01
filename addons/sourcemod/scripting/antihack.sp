@@ -52,14 +52,15 @@
 #include "AntiHack/AntiHack_Configuration.sp"
 #include "AntiHack/AntiHack_Crash_Code.sp"
 #include "AntiHack/AntiHack_Name_Monitoring.sp"
-//#include "AntiHack/"
-//#include "AntiHack/"
-//#include "AntiHack/"
+
+#include "AntiHack/AntiHack_DatabaseConnect.sp"
+#include "AntiHack/AntiHack_000_OnClientAuthorized.sp"
+#include "AntiHack/AntiHack_Database.sp"
 //#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
 
-new Handle:ClientHUD;
+//new Handle:ClientHUD;
 
 public Plugin:myinfo=
 {
@@ -95,8 +96,7 @@ public OnPluginStart()
 
 	g_hPotientalThreatWords = CreateArray(32);
 
-	ClientHUD = CreateHudSynchronizer();
-	CreateTimer(0.1,ClientAim,_,TIMER_REPEAT);
+	//CreateTimer(0.1,ClientAim,_,TIMER_REPEAT);
 
 	AntiHack_Configuration_OnPluginStart();
 }
@@ -110,6 +110,8 @@ public OnMapStart()
 
 public OnAllPluginsLoaded() //called once only, will not call again when map changes
 {
+	PrintToServer("OnAllPluginsLoaded *** START");
+
 	new Handle:smac_version = FindConVar("smac_aimbot_ban");
 
 	if(smac_version!=INVALID_HANDLE)
@@ -117,35 +119,31 @@ public OnAllPluginsLoaded() //called once only, will not call again when map cha
 		new String:TmpString[32];
 		GetConVarString(smac_version, TmpString, sizeof(TmpString));
 		CloseHandle(smac_version);
-		if(!StrEqual(TmpString,"0.8.5.1")) LogMessage("[AntiHack] Anti-Hack has only been tested on SMAC version 0.8.5.1, using any other version may cause problems.");
+		if(StrEqual(TmpString,"0.8.5.1")) LogMessage("[AntiHack] Anti-Hack has only been tested on SMAC version 0.8.5.1, using any other version may cause problems.");
+		SMACS_AIMBOT_DETECTED=true;
 	}
 	else
 	{
 		CloseHandle(smac_version);
-		SetFailState("[AntiHack] AntiHack Requires SMACS to function.");
-		CloseHandle(smac_version);
+		SMACS_AIMBOT_DETECTED=false;
+		LogMessage("[AntiHack] smacs_aimbot.smx not detected.  Some functions may not be available.");
 	}
 	CloseHandle(smac_version);
 
 	g_hCvarAimbotBan = FindConVar("smac_aimbot_ban");
 
-	PrintToServer("OnAllPluginsLoaded");
-
 	SetConVarInt(g_hCvarAimbotBan, 0);
 
-	//CreateTimer(GetConVarFloat(h_AutosaveTime),DoAutosave);
-}
+	ConnectToDataBase();
 
-public Action:ClientAim(Handle:timer,any:userid)
-{
-	for(new client=1;client<=MaxClients;client++)
+	CreateTimer(g_fAutosaveTime,DataBase_DoAutosave);
+
+	if(LibraryExists("ircrelay"))
 	{
-		if(ValidPlayer(client))
-		{
-			SetHudTextParams(-1.0, 0.20, 0.1, 255, 0, 0, 255);
-			ShowSyncHudText(client, ClientHUD, " Angles: [%.2f] [%.2f] [%.2f] ",CachedAngle[client][0],CachedAngle[client][1],CachedAngle[client][2]);
-		}
+		ircrelay_exists=true;
 	}
+
+	PrintToServer("OnAllPluginsLoaded *** END");
 }
 
 public Native_AH_CachedAngle(Handle:plugin,numParams)
@@ -366,4 +364,21 @@ public Action:AH_TeamSayCommand(client,args)
 		}
 	}
 	return Plugin_Continue;
+}
+
+
+public OnLibraryAdded(const String:name[])
+{
+	if(StrEqual(name,"ircrelay"))
+	{
+		ircrelay_exists=true;
+	}
+}
+
+public OnLibraryRemoved(const String:name[])
+{
+	if(StrEqual(name,"ircrelay"))
+	{
+		ircrelay_exists=false;
+	}
 }

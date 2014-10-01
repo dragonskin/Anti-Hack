@@ -3,6 +3,7 @@
 public AntiHack_Configuration_OnPluginStart()
 {
 	h_DatabaseName=							CreateConVar("antihacker_database",						"antihack");
+	h_SaveEnabled=							CreateConVar("antihacker_save_enabled",					"1");
 	h_AutosaveTime=							CreateConVar("antihacker_autosavetime",					"300.0");
 	h_CheckForUnicodeNames = 				CreateConVar("antihack_prevent_unicode_name_changing",	"1","1 - Enabled / 0 - Disable\nDoes not filter the name, but checks if they name contains banned unicode characters.");
 	h_CheckForSimilarNames = 				CreateConVar("antihack_prevent_similar_names",			"1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for similar names.\nIt is more aggressive than the Unicode Checker");
@@ -16,6 +17,20 @@ public AntiHack_Configuration_OnPluginStart()
 	HookConVarChange(h_CheckForSimilarNames,				CheckForSimilarNames_convar_changed);
 	HookConVarChange(h_CheckForUnicodeNames,				CheckForUnicodeNames_convar_changed);
 	HookConVarChange(h_DatabaseName,						DatabaseName_convar_changed);
+	HookConVarChange(h_AutosaveTime,						autosavetime_convar_changed);
+	HookConVarChange(h_SaveEnabled,							save_enabled_convar_changed);
+}
+
+public save_enabled_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
+{
+	if(convar == h_SaveEnabled)
+		g_bSaveEnabled = bool:StringToInt(newValue);
+}
+
+public autosavetime_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
+{
+	if(convar == h_AutosaveTime)
+		g_fAutosaveTime = StringToFloat(newValue);
 }
 
 public wordsearch_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
