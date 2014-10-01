@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS `antihack` (
+CREATE TABLE IF NOT EXISTS `antihack_tracking` (
   `player_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `player_name` varchar(300) DEFAULT NULL,
   `sComment` varchar(300) DEFAULT NULL,
-  `player_steam` varchar(64) DEFAULT NULL,
+  `player_auth` int(11) DEFAULT NULL,
   `iFirstTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `iLastTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `bIsHacker` tinyint(4) DEFAULT NULL,
