@@ -26,7 +26,9 @@ public bool:AHInitNativesForwards()
 
 	g_hOnAHTeamSayCommandFilter       = CreateGlobalForward("OnAHTeamSayCommandFilter", ET_Hook, Param_Cell, Param_String, Param_String);
 
-	return true;
+	new bool:ReturnSomething = AH_Aimbot_Detection_AskPluginLoad2();
+
+	return ReturnSomething;
 }
 
 public Native_AHSetHackerProp(Handle:plugin,numParams)
