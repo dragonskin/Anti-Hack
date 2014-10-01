@@ -4,9 +4,8 @@ Anti-Hack - Currently still in development.
 Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti-Hack.
 
 
-* requires SMAC version 0.8.5.1
 * optional (sourcebans)
-* 
+
 
 Currently still in development.
 
