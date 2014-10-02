@@ -111,7 +111,9 @@ public AH_Aimbot_Detection_OnPluginStart()
 			SetTrieValue(g_IgnoreWeapons, "tf_weapon_knife", 1);
 			SetTrieValue(g_IgnoreWeapons, "tf_weapon_stickbomb", 1);
 			SetTrieValue(g_IgnoreWeapons, "tf_weapon_katana", 1);
-			SetTrieValue(g_IgnoreWeapons, "tf_weapon_flamethrower", 1);
+			SetTrieValue(g_IgnoreWeapons, "tf_weapon_flamethrower", 1); // need to later add a toggle to test this, not sure why ignore this weapon.
+			// new
+			SetTrieValue(g_IgnoreWeapons, "tf_weapon_bat_giftwrap", 1);
 		}
 		case AHGame_HL2DM:
 		{
@@ -122,16 +124,6 @@ public AH_Aimbot_Detection_OnPluginStart()
 
 	// Hooks.
 	HookEntityOutput("trigger_teleport", "OnEndTouch", Teleport_OnEndTouch);
-	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
-
-	if (GAMETF)
-	{
-		HookEvent("player_death", TF2_Event_PlayerDeath, EventHookMode_Post);
-	}
-	else if (!HookEventEx("entity_killed", Event_EntityKilled, EventHookMode_Post))
-	{
-		HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
-	}
 }
 
 public AH_Aimbot_Detection_OnClientPutInServer(client)
@@ -153,11 +145,8 @@ public Teleport_OnEndTouch(const String:output[], caller, activator, Float:delay
 	}
 }
 
-public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
+AntiHack_Aimbot_Detection_PlayerSpawn(client)
 {
-	new userid = GetEventInt(event, "userid");
-	new client = GetClientOfUserId(userid);
-
 	if (IS_CLIENT(client))
 	{
 		Aimbot_ClearAngles(client);
@@ -165,78 +154,46 @@ public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 	}
 }
 
-public Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)
+public AntiHack_Aimbot_Detection_PlayerDeath(Handle:event,victim,attacker,inflictor,EventDeathType:type)
 {
-	decl String:sWeapon[32];
-	GetEventString(event, "weapon", sWeapon, sizeof(sWeapon));
-
-	if (GetTrieValue(g_IgnoreWeapons, sWeapon, dummy))
-		return;
-
-	new victim = GetClientOfUserId(GetEventInt(event, "userid"));
-	new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
-
-	if (IS_CLIENT(victim) && IS_CLIENT(attacker) && victim != attacker && IsClientInGame(victim) && IsClientInGame(attacker))
-	{
-		decl Float:vVictim[3], Float:vAttacker[3];
-		GetClientAbsOrigin(victim, vVictim);
-		GetClientAbsOrigin(attacker, vAttacker);
-
-		if (GetVectorDistance(vVictim, vAttacker) >= AIM_MIN_DISTANCE)
-		{
-			Aimbot_AnalyzeAngles(attacker);
-		}
-	}
-}
-
-public Event_EntityKilled(Handle:event, const String:name[], bool:dontBroadcast)
-{
-	/* (OB Only) Inflictor support lets us ignore non-bullet weapons. */
-	new victim = GetEventInt(event, "entindex_killed");
-	new attacker = GetEventInt(event, "entindex_attacker");
-	new inflictor = GetEventInt(event, "entindex_inflictor");
-
-	if (IS_CLIENT(victim) && IS_CLIENT(attacker) && victim != attacker && attacker == inflictor && IsClientInGame(victim) && IsClientInGame(attacker))
+	if(type==Event_PlayerDeath)
 	{
 		decl String:sWeapon[32];
-		GetClientWeapon(attacker, sWeapon, sizeof(sWeapon));
+		GetEventString(event, "weapon", sWeapon, sizeof(sWeapon));
 
 		if (GetTrieValue(g_IgnoreWeapons, sWeapon, dummy))
 			return;
 
-		decl Float:vVictim[3], Float:vAttacker[3];
-		GetClientAbsOrigin(victim, vVictim);
-		GetClientAbsOrigin(attacker, vAttacker);
-
-		if (GetVectorDistance(vVictim, vAttacker) >= AIM_MIN_DISTANCE)
+		if (IS_CLIENT(victim) && IS_CLIENT(attacker) && victim != attacker && IsClientInGame(victim) && IsClientInGame(attacker))
 		{
-			Aimbot_AnalyzeAngles(attacker);
+			decl Float:vVictim[3], Float:vAttacker[3];
+			GetClientAbsOrigin(victim, vVictim);
+			GetClientAbsOrigin(attacker, vAttacker);
+
+			if (GetVectorDistance(vVictim, vAttacker) >= AIM_MIN_DISTANCE)
+			{
+				Aimbot_AnalyzeAngles(attacker);
+			}
 		}
 	}
-}
-
-public TF2_Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)
-{
-	/* TF2 custom death event */
-	new victim = GetClientOfUserId(GetEventInt(event, "userid"));
-	new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
-	new inflictor = GetEventInt(event, "inflictor_entindex");
-
-	if (IS_CLIENT(victim) && IS_CLIENT(attacker) && victim != attacker && attacker == inflictor && IsClientInGame(victim) && IsClientInGame(attacker))
+	else
 	{
-		decl String:sWeapon[32];
-		GetClientWeapon(attacker, sWeapon, sizeof(sWeapon));
-
-		if (GetTrieValue(g_IgnoreWeapons, sWeapon, dummy))
-			return;
-
-		decl Float:vVictim[3], Float:vAttacker[3];
-		GetClientAbsOrigin(victim, vVictim);
-		GetClientAbsOrigin(attacker, vAttacker);
-
-		if (GetVectorDistance(vVictim, vAttacker) >= AIM_MIN_DISTANCE)
+		if (IS_CLIENT(victim) && IS_CLIENT(attacker) && victim != attacker && attacker == inflictor && IsClientInGame(victim) && IsClientInGame(attacker))
 		{
-			Aimbot_AnalyzeAngles(attacker);
+			decl String:sWeapon[32];
+			GetClientWeapon(attacker, sWeapon, sizeof(sWeapon));
+
+			if (GetTrieValue(g_IgnoreWeapons, sWeapon, dummy))
+				return;
+
+			decl Float:vVictim[3], Float:vAttacker[3];
+			GetClientAbsOrigin(victim, vVictim);
+			GetClientAbsOrigin(attacker, vAttacker);
+
+			if (GetVectorDistance(vVictim, vAttacker) >= AIM_MIN_DISTANCE)
+			{
+				Aimbot_AnalyzeAngles(attacker);
+			}
 		}
 	}
 }
