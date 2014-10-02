@@ -70,6 +70,14 @@ enum AHHackerProp
 // FORWARD FORWARD FORWARD FORWARD FORWARD FORWARD FORWARD FORWARD FORWARD FORWARD
 
 /**
+ * Called when Anti-Hack Loads a players data
+ *
+ * @param client:			Client index
+ * @noreturn
+ */
+forward OnAHPlayerLoadData(client);
+
+/**
  * Checks say command
  * OnAHSayCommandFilter has a ascii filter, that filters all characters that are not 32 - 126 ascii
  * See http://www.asciitable.com/
