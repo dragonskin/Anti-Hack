@@ -58,15 +58,18 @@
 */
 
 new Float:AIM_ANGLE_CHANGE = 45.0;		// Max angle change that a player should snap
-new AIM_BAN_MIN = 4;				// Minimum number of detections before an auto-ban is allowed
 new Float:AIM_MIN_DISTANCE = 200.0;		// Minimum distance acceptable for a detection.
+
+// not used at this time
+//new AIM_BAN_MIN = 4;				// Minimum number of detections before an auto-ban is allowed
+
 
 // High Sensitivity Mode:
 new Float:AIM_ANGLE_CHANGE_HS = 30.0;
 
 //new Float:g_iAimbotHS_Min_Distance = 100.0;
 
-new Handle:g_hCvarAimbotBan = INVALID_HANDLE;
+//new Handle:g_hCvarAimbotBan = INVALID_HANDLE;
 new Handle:g_IgnoreWeapons = INVALID_HANDLE;
 
 new Float:g_fEyeAngles[MAXPLAYERS+1][64][3];
