@@ -31,18 +31,25 @@
 
 #include <sourcemod>
 #include <antihack>
-#include <smac>
+#include <sdktools>
+
+#include <steamIDconverter>
 
 // for crash code
-#include <sdktools_tempents>
-#include <sdktools_tempents_stocks>
-#include <sdktools_engine>
-#include <sdktools_functions>
-#include <sdktools_entinput>
+//#include <sdktools_tempents>
+//#include <sdktools_tempents_stocks>
+//#include <sdktools_engine>
+//#include <sdktools_functions>
+//#include <sdktools_entinput>
 
 #tryinclude <sourcebans>
 
 #include "AntiHack/include/antihack_interface.inc"
+
+// Note the antihack_smac_*.inc file does not require smac,
+// it is just denoting that it contains some smac code:
+#include "AntiHack/include/antihack_smac_variables.inc"
+#include "AntiHack/include/antihack_smac_interface.inc"
 
 #include "AntiHack/AntiHack_000_Natives.sp"
 #include "AntiHack/AntiHack_000_OnClientConnected.sp"
@@ -56,6 +63,13 @@
 #include "AntiHack/AntiHack_DatabaseConnect.sp"
 #include "AntiHack/AntiHack_000_OnClientAuthorized.sp"
 #include "AntiHack/AntiHack_Database.sp"
+
+// AntiHack_Aimbot_Detection.sp contains some smac code:
+#include "AntiHack/AntiHack_Aimbot_Detection.sp"
+
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
@@ -99,6 +113,8 @@ public OnPluginStart()
 	//CreateTimer(0.1,ClientAim,_,TIMER_REPEAT);
 
 	AntiHack_Configuration_OnPluginStart();
+
+	AH_Aimbot_Detection_OnPluginStart();
 }
 
 public OnMapStart()
@@ -111,28 +127,6 @@ public OnMapStart()
 public OnAllPluginsLoaded() //called once only, will not call again when map changes
 {
 	PrintToServer("OnAllPluginsLoaded *** START");
-
-	new Handle:smac_version = FindConVar("smac_aimbot_ban");
-
-	if(smac_version!=INVALID_HANDLE)
-	{
-		new String:TmpString[32];
-		GetConVarString(smac_version, TmpString, sizeof(TmpString));
-		CloseHandle(smac_version);
-		if(StrEqual(TmpString,"0.8.5.1")) LogMessage("[AntiHack] Anti-Hack has only been tested on SMAC version 0.8.5.1, using any other version may cause problems.");
-		SMACS_AIMBOT_DETECTED=true;
-	}
-	else
-	{
-		CloseHandle(smac_version);
-		SMACS_AIMBOT_DETECTED=false;
-		LogMessage("[AntiHack] smacs_aimbot.smx not detected.  Some functions may not be available.");
-	}
-	CloseHandle(smac_version);
-
-	g_hCvarAimbotBan = FindConVar("smac_aimbot_ban");
-
-	SetConVarInt(g_hCvarAimbotBan, 0);
 
 	ConnectToDataBase();
 
