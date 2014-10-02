@@ -639,13 +639,40 @@ stock IsBlockedWord(client, String: command[])
 	return 0;
 }
 
+stock bool:IsPotientalThreatWord(String:PossibleThreatWord[])
+{
+	decl String:TmpStr[32];
+	for(new i = 0; i < GetArraySize(g_hPotientalThreatWords); i++)
+	{
+		GetArrayString(g_hPotientalThreatWords, i, TmpStr, sizeof(TmpStr));
+
+		if(ExtremeFiltering)
+		{
+			FilterSentence(TmpStr,ExtremeFiltering);
+		}
+
+		if(StrEqual(PossibleThreatWord,TmpStr))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+stock AStrToLower(String:buffer[])
+{
+	new len = strlen(buffer);
+	for(new i = 0; i < len; i++)
+	{
+		buffer[i] = CharToLower(buffer[i]);
+	}
+}
+
 stock bool:ParseFile()
 {
-	decl String:path[1024],String:vip_map_file_path[1024];
+	decl String:path[PLATFORM_MAX_PATH];
 
-	GetConVarString(h_antihack_wordsearch_location, vip_map_file_path, sizeof(vip_map_file_path));
-
-	BuildPath(Path_SM,path,sizeof(path),vip_map_file_path);
+	BuildPath(Path_SM,path,sizeof(path),g_sAntihack_filter_location);
 
 	/* Return true if an update was available. */
 	new Handle:kv = CreateKeyValues("AntiHack");
@@ -656,7 +683,7 @@ stock bool:ParseFile()
 		return false;
 	}
 
-	ClearArray(g_hMapNames);
+	ClearArray(g_hPotientalThreatWords);
 
 	new String:sBuffer[32];
 
