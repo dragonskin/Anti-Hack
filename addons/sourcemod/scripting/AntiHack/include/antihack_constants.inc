@@ -1,20 +1,22 @@
 // antihack_constants.inc
 
-/*  This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+/*
+	Anti-Hack
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	Copyright (c) 2014  El Diablo <diablo@war3evo.info>
+
+	Antihack is free software: you may copy, redistribute
+	and/or modify it under the terms of the GNU General Public License as
+	published by the Free Software Foundation, either version 3 of the
+	License, or (at your option) any later version.
+
+	This file is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-	Antihack written by El Diablo of www.War3Evo.info
-	All rights reserved.
 */
 
 enum AntiHackSQLType
@@ -50,3 +52,16 @@ stock const String:Team_List[][] = {
 	"Unknown"
 };
 
+// Use these like a boolean
+#define GAMEINSMOD GameINSMOD()
+#define GAMEDOD GameDOD()
+#define GAMEHL2DM GameHL2DM()
+#define GAMECS GameCS()
+#define GAMETF GameTF()
+#define GAMEL4D1 GameL4D1()
+#define GAMEL4D2 GameL4D2()
+#define GAMEL4DANY GameL4DAny()
+#define GAMECSGO GameCSGO()
+#define GAMECSANY GameCSANY()
+// games that supports <color>
+#define GAMECOLOR GameCOLOR()
