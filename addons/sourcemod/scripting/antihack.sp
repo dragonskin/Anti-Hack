@@ -66,7 +66,13 @@
 // AntiHack_SpinHack_Detection.sp contains some smac code:
 #include "AntiHack/AntiHack_SpinHack_Detection.sp"
 
+#include "AntiHack/AntiHack_Event_Hooks.sp"
 
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
+//#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
