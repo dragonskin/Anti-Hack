@@ -22,4 +22,4 @@ CREATE TABLE IF NOT EXISTS `antihack_tracking` (
   `iCrashed` int(11) DEFAULT NULL,
   PRIMARY KEY (`player_id`),
   UNIQUE KEY `player_steam` (`player_steam`)
-) ENGINE=InnoDB AUTO_INCREMENT=228 DEFAULT CHARSET=latin1$$
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1$$
