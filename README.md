@@ -12,7 +12,7 @@ Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti
 * Prevent Name Copying
 * Filter Hacking Ads
 * Check and Prevent Unicode Name changing
-* SpinHack Early Warning System added (optional, default off)
+* SpinHack Early Warning System (optional, default off)
 
 
 
