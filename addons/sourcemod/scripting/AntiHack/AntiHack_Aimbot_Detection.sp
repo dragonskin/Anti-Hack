@@ -267,7 +267,7 @@ public Action:Timer_DecreaseCount(Handle:timer, any:userid)
 	return Plugin_Stop;
 }
 
-public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon)
+public Action:Aimbot_Detection_OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon)
 {
 	g_fEyeAngles[client][g_iEyeIndex[client]] = angles;
 
