@@ -27,6 +27,64 @@ AH_Database_SetPlayerDefaults(client)
 ///////////////////// DATABASE ///////////////////////////////////////
 ///////////////////// DATABASE ///////////////////////////////////////
 
+public Initialize_SQLTable()
+{
+	PrintToServer("[War3Evo] Initialize_SQLTable");
+	if(hDB!=INVALID_HANDLE)
+	{
+		SQL_LockDatabase(hDB); //non threading operations here, done once on plugin load only, not map change
+
+		//main table
+		//new String:shortquery[300];
+		//Format(shortquery,sizeof(shortquery),"SELECT * from `antihack_tracking` LIMIT 1");
+		new Handle:query=SQL_Query(hDB,"SELECT * from `antihack_tracking` LIMIT 1");
+
+
+		if(query==INVALID_HANDLE)
+		{
+			new String:createtable[3000];
+			Format(createtable,sizeof(createtable),
+			"CREATE TABLE IF NOT EXISTS `antihack_tracking` ( \
+			`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT, \
+			`player_name` varchar(300) DEFAULT NULL, \
+			`sComment` varchar(300) DEFAULT NULL, \
+			`player_auth` int(11) DEFAULT NULL, \
+			`steamid` varchar(64) DEFAULT NULL, \
+			`steamid2` varchar(64) DEFAULT NULL, \
+			`iFirstTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', \
+			`iLastTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', \
+			`bIsHacker` tinyint(4) DEFAULT NULL, \
+			`bAntiAimbot` tinyint(4) DEFAULT NULL, \
+			`bChanceOnHit` tinyint(4) DEFAULT NULL, \
+			`bNoDamage` tinyint(4) DEFAULT NULL, \
+			`iAimbotCount` int(11) DEFAULT NULL, \
+			`iHSAimbotCount` int(11) DEFAULT NULL, \
+			`iSpinhackCount` int(11) DEFAULT NULL, \
+			`iEyeAnglesCount` int(11) DEFAULT NULL, \
+			`iTamperingButtonsCount` int(11) DEFAULT NULL, \
+			`iTamperingTickcountCount` int(11) DEFAULT NULL, \
+			`iReusingMovementCommandsCount` int(11) DEFAULT NULL, \
+			`iTamperingViewAnglesAimbotCount` int(11) DEFAULT NULL, \
+			`iCrashed` int(11) DEFAULT NULL, \
+			PRIMARY KEY (`player_id`), \
+			UNIQUE KEY `player_steam` (`player_steam`) \
+			) ENGINE=InnoDB AUTO_INCREMENT=1 %s",
+			g_SQLType==SQLType_MySQL?"DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci":"" );
+
+			if(!SQL_FastQueryLogOnError(hDB,createtable))
+			{
+				SetFailState("[ANTIHACK] ERROR in the creation of the SQL table antihack_tracking.");
+			}
+		}
+
+		CloseHandle(query);
+
+		SQL_UnlockDatabase(hDB);
+	}
+	else
+		PrintToServer("hDB invalid 123");
+}
+
 /*
 public SQLCallback_CreatePlayerTable(Handle:db, Handle:hndl, const String:error[], any:data)
 {
@@ -64,7 +122,7 @@ stock AH_ForceReloadPlayerData(client)
 		}
 		else
 		{
-			LogMessage("AH_ForceReloadPlayerData Database Invalid");
+			LogError("AH_ForceReloadPlayerData Database Invalid");
 		}
 	}
 
@@ -92,7 +150,7 @@ public OnAHDatabasePlayerAuthed(client, const String:auth[])
 	}
 	else
 	{
-		AntiHackLog("OnAHDatabasePlayerAuthed() Database Invalid!");
+		LogError("OnAHDatabasePlayerAuthed() Database Invalid!");
 	}
 }
 
@@ -100,7 +158,7 @@ public SQLCallback_Void(Handle:db, Handle:hndl, const String:error[], any:userid
 {
 	if(hndl == INVALID_HANDLE)
 	{
-		AntiHackLog("SQLCallback_Void: Error looking up player. %s.", error);
+		LogError("SQLCallback_Void: Error looking up player. %s.", error);
 	}
 }
 
@@ -115,7 +173,7 @@ public SQLCallback_PlayerJoin(Handle:db, Handle:hndl, const String:error[], any:
 	new client = GetClientOfUserId(userid);
 	if(hndl == INVALID_HANDLE)
 	{
-		AntiHackLog("SQLCallback_PlayerJoin: Error looking up player. %s.", error);
+		LogError("SQLCallback_PlayerJoin: Error looking up player. %s.", error);
 		AHSetHackerProp(client,iPlayerID,-1);
 	}
 	else
@@ -172,7 +230,7 @@ public SQLCallback_DeletePlayer(Handle:db, Handle:hndl, const String:error[], an
 {
 	if(hndl == INVALID_HANDLE)
 	{
-		AntiHackLog("Error getting last insert id. %s.", error);
+		LogError("Error getting last insert id. %s.", error);
 	}
 	else
 	{
@@ -240,7 +298,7 @@ public SQLCallback_LookupPlayer(Handle:owner,Handle:hndl,const String:error[],an
 
 	if(hndl == INVALID_HANDLE)
 	{
-		AntiHackLog("SQLCallback_LookupPlayer: Error looking up player. %s.", error);
+		LogError("SQLCallback_LookupPlayer: Error looking up player. %s.", error);
 	}
 	else
 	{
@@ -412,7 +470,7 @@ public SQLCallback_LastInsertID(Handle:db, Handle:hndl, const String:error[], an
 {
 	if(hndl == INVALID_HANDLE)
 	{
-		AntiHackLog("Error getting last insert id. %s.", error);
+		LogError("Error getting last insert id. %s.", error);
 	}
 	else
 	{
