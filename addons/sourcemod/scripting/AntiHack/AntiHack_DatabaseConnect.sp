@@ -17,6 +17,7 @@ public ConnectToDataBase()
 	{
 		new String:driver_ident[64];
 		SQL_ReadDriver(hDB,driver_ident,sizeof(driver_ident));
+		/*
 		if(StrEqual(driver_ident,"mysql",false))
 		{
 			g_SQLType=SQLType_MySQL;
@@ -28,7 +29,7 @@ public ConnectToDataBase()
 		else
 		{
 			g_SQLType=SQLType_Unknown;
-		}
+		}*/
 		PrintToServer("[ANTIHACK] SQL connection successful, driver %s",driver_ident);
 		SQL_LockDatabase(hDB);
 		SQL_FastQuery(hDB, "SET NAMES \"UTF8\"");
