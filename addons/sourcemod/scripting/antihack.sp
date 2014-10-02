@@ -50,23 +50,23 @@
 #include "AntiHack/include/antihack_smac_interface.inc"
 
 #include "AntiHack/AntiHack_000_Natives.sp"
+#include "AntiHack/AntiHack_000_OnClientAuthorized.sp"
 #include "AntiHack/AntiHack_000_OnClientConnected.sp"
 #include "AntiHack/AntiHack_000_OnClientDisconnect.sp"
 #include "AntiHack/AntiHack_000_OnClientPutInServer.sp"
 #include "AntiHack/AntiHack_000_OnGameFrame.sp"
-#include "AntiHack/AntiHack_Configuration.sp"
-#include "AntiHack/AntiHack_Crash_Code.sp"
-#include "AntiHack/AntiHack_Name_Monitoring.sp"
-
-#include "AntiHack/AntiHack_DatabaseConnect.sp"
-#include "AntiHack/AntiHack_000_OnClientAuthorized.sp"
-#include "AntiHack/AntiHack_Database.sp"
-
+#include "AntiHack/AntiHack_000_OnPlayerRunCmd.sp"
 // AntiHack_Aimbot_Detection.sp contains some smac code:
 #include "AntiHack/AntiHack_Aimbot_Detection.sp"
+#include "AntiHack/AntiHack_Configuration.sp"
+#include "AntiHack/AntiHack_Crash_Code.sp"
+#include "AntiHack/AntiHack_Database.sp"
+#include "AntiHack/AntiHack_DatabaseConnect.sp"
+#include "AntiHack/AntiHack_Name_Monitoring.sp"
+// AntiHack_SpinHack_Detection.sp contains some smac code:
+#include "AntiHack/AntiHack_SpinHack_Detection.sp"
 
-//#include "AntiHack/"
-//#include "AntiHack/"
+
 //#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
@@ -113,6 +113,8 @@ public OnPluginStart()
 	AntiHack_Configuration_OnPluginStart();
 
 	AH_Aimbot_Detection_OnPluginStart();
+
+	SpinHack_Detection_OnPluginStart();
 }
 
 public OnMapStart()
@@ -148,24 +150,6 @@ public Native_AH_CachedPosition(Handle:plugin,numParams)
 {
 	new client=GetNativeCell(1);
 	SetNativeArray(2,CachedPos[client],3);
-}
-
-public Action:SMAC_OnCheatDetected(client, const String:module[], DetectionType:type, Handle:info)
-{
-	if(ValidPlayer(client))
-	{
-		switch (type)
-		{
-			case Detection_Aimbot:
-			{
-				++g_iAimDetections[client];
-				IncreaseAimBotCount(client);
-
-				return Plugin_Handled;
-			}
-		}
-	}
-	return Plugin_Continue;
 }
 
 public FilterType:filter_words(client, String:user_command[192])
