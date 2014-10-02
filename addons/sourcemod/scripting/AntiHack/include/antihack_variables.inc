@@ -39,9 +39,6 @@ new bool:ExtremeFiltering=false;
 new Handle:h_antihack_ban = INVALID_HANDLE;
 new bool:AllowBans=true;
 
-// Say and Team Say command filters
-new Handle:g_hOnAHSayCommandFilter;
-new Handle:g_hOnAHTeamSayCommandFilter;
 
 // name changer monitor
 new TrackNameChanges[MAXPLAYERS+1];
@@ -61,6 +58,12 @@ new Handle:h_DatabaseName; // used for configurations
 new String:g_sDatabaseName[32]={"antihack"};
 //new AntiHackSQLType:g_SQLType;
 new bool:CanLoadDataBase=false;
+
+// Forwards
+new Handle:g_OnAHPlayerLoadData;
+// Say and Team Say command filters
+new Handle:g_hOnAHSayCommandFilter;
+new Handle:g_hOnAHTeamSayCommandFilter;
 
 // Saving Stuff
 new Float:g_fAutosaveTime=300.0;
@@ -82,3 +85,5 @@ new bool:g_bHighSensitivityModeEnabled=false;
 // SpinHack
 new Handle:h_antihack_spinhack_crash;
 new bool:g_bCrash_OnSpinHack=true;
+new Handle:h_antihack_spinhack_warning
+new bool:g_bSpinhack_warning=false;
