@@ -25,13 +25,6 @@ stock String:dummystr[32];
 new Float:CachedAngle[MAXPLAYERS + 1][3];
 new Float:CachedPos[MAXPLAYERS + 1][3];
 
-new g_iAimDetections[MAXPLAYERS+1];
-
-new Handle:g_hCvarAimbotBan = INVALID_HANDLE;
-
-// SMACS
-new bool:SMACS_AIMBOT_DETECTED=false;
-
 // word filtering system
 new Blocked_Players_ID[MAXPLAYERS + 1];
 new Handle:g_hPotientalThreatWords;
@@ -80,3 +73,8 @@ new bool:ircrelay_exists=false;
 // Player Properties
 new p_properties[MAXPLAYERS+1][AHHackerProp];
 new String:p_properties_comment[MAXPLAYERS+1][300];
+
+
+// High Sensitivity Mode
+new Handle:h_HighSensitivityModeEnabled;
+new bool:g_bHighSensitivityModeEnabled=false;
