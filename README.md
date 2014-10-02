@@ -6,6 +6,7 @@ Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti
 * SMACS imported and modified (GNU GPL v3 copyright headers included)
 * SMACS modified for early detections (High Sensitivity Mode)
 * optional (sourcebans)
+* High Sensitivity Mode (Detect hacking users before the "acutal detection" or detect them trying to "beat SMACS").
 
 
 Currently still in development.
