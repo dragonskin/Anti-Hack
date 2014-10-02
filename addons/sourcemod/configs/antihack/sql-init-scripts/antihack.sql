@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS `antihack_tracking` (
   `player_name` varchar(300) DEFAULT NULL,
   `sComment` varchar(300) DEFAULT NULL,
   `player_auth` int(11) DEFAULT NULL,
+  `steamid` varchar(64) DEFAULT NULL,
+  `steamid2` varchar(64) DEFAULT NULL,
   `iFirstTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `iLastTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `bIsHacker` tinyint(4) DEFAULT NULL,
