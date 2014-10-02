@@ -33,8 +33,6 @@
 #include <antihack>
 #include <sdktools>
 
-#include <steamIDconverter>
-
 // for crash code
 //#include <sdktools_tempents>
 //#include <sdktools_tempents_stocks>
