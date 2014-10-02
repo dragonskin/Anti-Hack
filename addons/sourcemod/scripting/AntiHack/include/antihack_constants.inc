@@ -19,6 +19,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+enum EventDeathType
+{
+	TF2_Event_PlayerDeath = 0,
+	Event_EntityKilled,
+	Event_PlayerDeath,
+}
+
+
 enum AntiHackSQLType
 {
 	SQLType_Unknown = 0,
