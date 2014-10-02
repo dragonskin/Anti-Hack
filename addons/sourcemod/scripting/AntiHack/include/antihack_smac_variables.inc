@@ -57,6 +57,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// AIMBOT
+
 new Float:AIM_ANGLE_CHANGE = 45.0;		// Max angle change that a player should snap
 new Float:AIM_MIN_DISTANCE = 200.0;		// Minimum distance acceptable for a detection.
 
@@ -78,3 +80,17 @@ new g_iEyeIndex[MAXPLAYERS+1];
 new g_iAimDetections[MAXPLAYERS+1];
 new g_iAimbotBan = 0;
 new g_iMaxAngleHistory;
+
+// SPINHACK
+
+new SPIN_DETECTIONS = 15;					// Seconds of non-stop spinning before spinhack is detected
+new Float:SPIN_ANGLE_CHANGE = 1440.0;		// Max angle deviation over one second before being flagged
+new SPIN_SENSITIVITY = 6;					// Ignore players with a higher mouse sensitivity than this
+
+new Float:g_fPrevAngle[MAXPLAYERS+1];
+new Float:g_fAngleDiff[MAXPLAYERS+1];
+new Float:g_fAngleBuffer;
+new Float:g_fSensitivity[MAXPLAYERS+1];
+
+new g_iSpinCount[MAXPLAYERS+1];
+
