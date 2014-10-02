@@ -94,11 +94,11 @@ public Action:Timer_CheckSpins(Handle:timer)
 			if (g_bSpinhack_warning && g_iSpinCount[i] == (SPIN_DETECTIONS-5) && g_fSensitivity[i] <= SPIN_SENSITIVITY)
 			{
 				decl String:sClientName[128];
-				GetClientName(client,sClientName,sizeof(sClientName));
+				GetClientName(i,sClientName,sizeof(sClientName));
 
 				decl String:sSteamID[64],String:sSteamID2[64];
 
-				GetClientAuthString(client, sSteamID2, sizeof(sSteamID2));
+				GetClientAuthString(i, sSteamID2, sizeof(sSteamID2));
 				strcopy(sSteamID, sizeof(sSteamID), sSteamID2);
 				if(GAMETF)
 				{
