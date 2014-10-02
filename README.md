@@ -19,3 +19,4 @@ Plans:
 * Optionally crashes hackers whom do certain hacks on your server
 * 
 
+Configure Anti-Hack: https://github.com/War3Evo/Anti-Hack/wiki/Configuration-(server.cfg)
