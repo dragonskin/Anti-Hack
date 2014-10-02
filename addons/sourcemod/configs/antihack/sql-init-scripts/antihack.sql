@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `antihack_tracking` (
   `bChanceOnHit` tinyint(4) DEFAULT NULL,
   `bNoDamage` tinyint(4) DEFAULT NULL,
   `iAimbotCount` int(11) DEFAULT NULL,
+  `iHSAimbotCount` int(11) DEFAULT NULL,
   `iSpinhackCount` int(11) DEFAULT NULL,
   `iEyeAnglesCount` int(11) DEFAULT NULL,
   `iTamperingButtonsCount` int(11) DEFAULT NULL,
