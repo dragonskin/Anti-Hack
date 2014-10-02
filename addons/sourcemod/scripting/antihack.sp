@@ -135,13 +135,21 @@ public OnAllPluginsLoaded() //called once only, will not call again when map cha
 {
 	PrintToServer("OnAllPluginsLoaded *** START");
 
-	ConnectToDataBase();
+	if(ConnectToDataBase())
+	{
+		Initialize_SQLTable();
+	}
 
 	CreateTimer(g_fAutosaveTime,DataBase_DoAutosave);
 
 	if(LibraryExists("ircrelay"))
 	{
 		ircrelay_exists=true;
+	}
+
+	if(LibraryExists("sourcebans"))
+	{
+		sourcebans_exists=true;
 	}
 
 	ParseFile();
@@ -155,6 +163,10 @@ public OnLibraryAdded(const String:name[])
 	{
 		ircrelay_exists=true;
 	}
+	else if(StrEqual(name,"sourcebans"))
+	{
+		sourcebans_exists=true;
+	}
 }
 
 public OnLibraryRemoved(const String:name[])
@@ -162,5 +174,9 @@ public OnLibraryRemoved(const String:name[])
 	if(StrEqual(name,"ircrelay"))
 	{
 		ircrelay_exists=false;
+	}
+	else if(StrEqual(name,"sourcebans"))
+	{
+		sourcebans_exists=false;
 	}
 }
