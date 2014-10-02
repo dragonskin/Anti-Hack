@@ -104,7 +104,7 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
 		Call_StartFunction(plugin, func);
 		Call_Finish(dummy);
 		if(!dummy) {
-			LogError("AHInitNativesForwards did not return true, possible failure");
+			SetFailState("AHInitNativesForwards did not return true, possible failure");
 		}
 	}
 
@@ -131,9 +131,9 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
  */
 forward bool:AHInitNativesForwards();
 
-stock ValveGameEnum:AH_GetGame()
+stock eGameNumberValve:AH_GetGame()
 {
-	return ValveGameEnum:tValveGame;
+	return eGameNumberValve:tValveGame;
 }
 
 stock bool:GameINSMOD()
@@ -181,14 +181,14 @@ stock bool:GameCSGO()
 }
 stock bool:GameCSANY()
 {
-	new ValveGameEnum:AH_Game_Detection = AH_GetGame();
+	new eGameNumberValve:AH_Game_Detection = AH_GetGame();
 
 	return (AH_Game_Detection == AHGame_CSS || AH_Game_Detection == AHGame_CSGO);
 }
 // These games support <color>
 stock bool:GameCOLOR()
 {
-	new ValveGameEnum:AH_Game_Detection = AH_GetGame();
+	new eGameNumberValve:AH_Game_Detection = AH_GetGame();
 
 	return (AH_Game_Detection == AHGame_CSS
 	|| AH_Game_Detection == AHGame_CSGO
@@ -331,7 +331,10 @@ stock AntiHackLog(const String:reason[]="", any:...)
 	decl String:LogThis[2048];
 	VFormat(LogThis, sizeof(LogThis), reason, 2);
 
-	BuildPath(Path_SM, szFile, sizeof(szFile), "logs/antihack.log");
+	decl String:date[32];
+	FormatTime(date, sizeof(date), "%m_%d_%y");
+
+	BuildPath(Path_SM, szFile, sizeof(szFile), "logs/antihack_%s.log");
 	LogToFile(szFile, LogThis);
 }
 
@@ -696,6 +699,19 @@ stock AddStringOnly(Handle:handleString, const String:key[])
 	//DP("String: %s",key);
 
 	return -1;
+}
+
+stock IncreaseHSAimBotCount(client)
+{
+	AHSetHackerProp(client,iHSAimbotCount,AHGetHackerProp(client,iHSAimbotCount)+1);
+}
+
+stock DecreaseHSAimBotCount(client)
+{
+	if(AHGetHackerProp(client,iHSAimbotCount)>0)
+	{
+		AHSetHackerProp(client,iHSAimbotCount,AHGetHackerProp(client,iHSAimbotCount)-1);
+	}
 }
 
 stock IncreaseAimBotCount(client)
