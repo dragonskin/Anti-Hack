@@ -259,7 +259,7 @@ stock any:internal_AHGetHackerProp(client,AHHackerProp:AHproperty)
 		return 0;
 }
 
-stock Convert_SteamID_TO_UniqueID(String:sIDinfo[64])
+stock bool:Convert_SteamID_TO_UniqueID(String:sIDinfo[64])
 {
 	if(StrContains(sIDinfo,"STEAM_")>-1)
 	{
@@ -269,10 +269,12 @@ stock Convert_SteamID_TO_UniqueID(String:sIDinfo[64])
 		new bInt=StringToInt(sBuffer[2]);
 		new cInt=bInt*2+aInt;
 		Format(sIDinfo,sizeof(sIDinfo),"[U:1:%d]",cInt);
+		return true;
 	}
+	return false;
 }
 
-stock Convert_UniqueID_TO_SteamID(String:sIDinfo[64])
+stock bool:Convert_UniqueID_TO_SteamID(String:sIDinfo[64])
 {
 	if(StrContains(sIDinfo,"[U:")>-1)
 	{
@@ -291,7 +293,9 @@ stock Convert_UniqueID_TO_SteamID(String:sIDinfo[64])
 		}
 		new bInt=cInt/2;
 		Format(sIDinfo,sizeof(sIDinfo),"STEAM_0:%d:%d",aInt,bInt);
+		return true;
 	}
+	return false;
 }
 
 stock bool:GetClientAuthString_OldStyle(client, String:authStringDest[], strSize, bool:validate = true)
