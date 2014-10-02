@@ -115,6 +115,8 @@ public OnPluginStart()
 	AH_Aimbot_Detection_OnPluginStart();
 
 	SpinHack_Detection_OnPluginStart();
+
+	AntiHack_Event_Hooks_OnPluginStart();
 }
 
 public OnMapStart()
