@@ -29,10 +29,11 @@ new Float:CachedPos[MAXPLAYERS + 1][3];
 new Blocked_Players_ID[MAXPLAYERS + 1];
 new Handle:g_hPotientalThreatWords;
 new Handle:h_antihack_filter_location;
+new String:g_sAntihack_filter_location[PLATFORM_MAX_PATH];
 new Handle:h_antihack_Efilter;
 new Handle:h_CheckForUnicodeNames;
-new Handle:h_CheckForSimilarNames;
-new Handle:h_antihack_prevent_name_copying;
+new Handle:h_Prevent_name_copying;
+new bool:g_bPrevent_name_copying=true;
 new bool:ExtremeFiltering=false;
 
 new Handle:h_antihack_ban = INVALID_HANDLE;
@@ -46,7 +47,6 @@ new Handle:g_hOnAHTeamSayCommandFilter;
 new TrackNameChanges[MAXPLAYERS+1];
 new bool:TrackNameChangesTriggered[MAXPLAYERS+1];
 new String:sOldName[MAXPLAYERS+1][64];
-new bool:g_bCheckForSimilarNames=true;
 new bool:g_bCheckForUnicodeNames=true;
 
 // crash code
@@ -59,7 +59,7 @@ new Handle:h_AutosaveTime;
 new Handle:hDB; // the database handle
 new Handle:h_DatabaseName; // used for configurations
 new String:g_sDatabaseName[32]={"antihack"};
-new AntiHackSQLType:g_SQLType;
+//new AntiHackSQLType:g_SQLType;
 new bool:CanLoadDataBase=false;
 
 // Saving Stuff
