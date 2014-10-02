@@ -304,10 +304,9 @@ public SQLCallback_LookupPlayer(Handle:owner,Handle:hndl,const String:error[],an
 		}
 		if(retrievals>0)
 		{
-			// possible global forward?
-			//Call_StartForward(g_OnANTIHACK_PlayerLoadData);
-			//Call_PushCell(client);
-			//Call_Finish(dummy);
+			Call_StartForward(g_OnAHPlayerLoadData);
+			Call_PushCell(client);
+			Call_Finish(dummy);
 		}
 	}
 }
@@ -377,12 +376,24 @@ stock AH_SaveHackerData(client)
 					new String:newComment[buffer_len];
 					SQL_EscapeString(hDB,sNewComment,newComment,buffer_len);
 
+					decl String:sSteamID[64],String:sSteamID2[64];
+
+					GetClientAuthString(client, sSteamID2, sizeof(sSteamID2));
+					strcopy(sSteamID, sizeof(sSteamID), sSteamID2);
+					if(GAMETF)
+					{
+						if(!Convert_UniqueID_TO_SteamID(sSteamID2))
+						{
+							Convert_SteamID_TO_UniqueID(sSteamID2);
+						}
+					}
+
 					new String:query[3000];
-					Format(query, sizeof(query), "INSERT INTO `antihack_tracking`(`player_name`, `sComment`, `player_auth`, `iFirstTimeHacked`, `iLastTimeHacked`, \
+					Format(query, sizeof(query), "INSERT INTO `antihack_tracking`(`player_name`, `sComment`, `player_auth`, `steamid`, `steamid2`, `iFirstTimeHacked`, `iLastTimeHacked`, \
 					`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, `iAimbotCount`, `iHSAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
 					`iTamperingButtonsCount`, `iTamperingTickcountCount`, `iReusingMovementCommandsCount`, \
 					`iTamperingViewAnglesAimbotCount`, `iCrashed`) VALUES('%s', '%s', '%d', FROM_UNIXTIME('%d'), FROM_UNIXTIME('%d'), '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');",
-					newshortname, newComment, UserAccountID, AHGetHackerProp(client,iFirstTimeHacked), AHGetHackerProp(client,iLastTimeHacked),
+					newshortname, newComment, UserAccountID, sSteamID, sSteamID2, AHGetHackerProp(client,iFirstTimeHacked), AHGetHackerProp(client,iLastTimeHacked),
 					AHGetHackerProp(client,bIsHacker), AHGetHackerProp(client,bAntiAimbot), AHGetHackerProp(client,bChanceOnHit),
 					AHGetHackerProp(client,bNoDamage), AHGetHackerProp(client,iAimbotCount), AHGetHackerProp(client,iHSAimbotCount), AHGetHackerProp(client,iSpinhackCount),
 					AHGetHackerProp(client,iEyeAnglesCount), AHGetHackerProp(client,iTamperingButtonsCount), AHGetHackerProp(client,iTamperingTickcountCount),
