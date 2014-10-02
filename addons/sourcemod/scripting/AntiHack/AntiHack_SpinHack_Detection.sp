@@ -66,6 +66,7 @@ public SpinHack_Detection_OnClientDisconnect(client)
 {
 	g_iSpinCount[client] = 0;
 	g_fSensitivity[client] = 0.0;
+	g_iSpinhack_Detections[client] = 0;
 }
 
 public Action:Timer_CheckSpins(Handle:timer)
@@ -175,7 +176,7 @@ Spinhack_Detected(client)
 		AntiHackLog("%s %s is suspected of using a spinhack.", sClientName, sSteamID);
 	}
 
-	if(g_bCrash_OnSpinHack)
+	if(g_iCrash_OnSpinHack>++g_iSpinhack_Detections[client])
 	{
 		CrashClient(client);
 		AntiHackLog("%s %s >> Crashed Client", sClientName, sSteamID);

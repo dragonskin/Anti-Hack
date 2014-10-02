@@ -13,7 +13,7 @@ public AntiHack_Configuration_OnPluginStart()
 	h_antihack_filter_location=				CreateConVar("ah_wordsearch_location",							"configs/hacking_advertisment_filter.cfg","default location:\nconfigs/hacking_advertisment_filter.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
 	h_antihack_Efilter=						CreateConVar("ah_wordsearch_extremefilter",						"0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
 
-	h_antihack_spinhack_crash=				CreateConVar("ah_spinhack_crash",								"1","1 - Enabled / 0 - Disable\nAllow AntiHack to crash clients whom spinhack.");
+	h_antihack_spinhack_crash=				CreateConVar("ah_spinhack_crash",								"2","0 - Disable\nAllow AntiHack to crash clients whom spinhack after X number of times.");
 
 	h_antihack_spinhack_warning=			CreateConVar("ah_spinhack_early_warning",						"0","1 - Enabled / 0 - Disable\nAnti-Hack will alert admins ahead of time about possible spinhack,\nbefore the actual detection.");
 
@@ -44,7 +44,7 @@ public spinhack_warning_convar_changed(Handle:convar, const String:oldValue[], c
 public spinhack_crash_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
 {
 	if(convar == h_antihack_spinhack_crash)
-		g_bCrash_OnSpinHack = bool:StringToInt(newValue);
+		g_iCrash_OnSpinHack = bool:StringToInt(newValue);
 }
 
 public prevent_name_copying_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])

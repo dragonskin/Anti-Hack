@@ -84,6 +84,7 @@ new bool:g_bHighSensitivityModeEnabled=false;
 
 // SpinHack
 new Handle:h_antihack_spinhack_crash;
-new bool:g_bCrash_OnSpinHack=true;
+new g_iCrash_OnSpinHack=2;
 new Handle:h_antihack_spinhack_warning;
 new bool:g_bSpinhack_warning=false;
+new g_iSpinhack_Detections[MAXPLAYERS + 1];
