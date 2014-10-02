@@ -28,7 +28,7 @@ public Action:OnDebugP(UserMsg:msg_id, Handle:hBitBuffer, const clients[], numCl
 
 public Action:Event_player_changename(Handle:event,  const String:name[], bool:dontBroadcast)
 {
-	if(!g_bPrevent_name_copying && !g_bCheckForUnicodeNames) return Plugin_Continue;
+	if(!g_bPrevent_name_copying && !g_iCheckForUnicodeNames) return Plugin_Continue;
 
 	new userid = GetEventInt(event, "userid");
 	new client = GetClientOfUserId(userid);
@@ -81,7 +81,7 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 			}
 		}
 
-		if(g_bCheckForUnicodeNames)
+		if(g_iCheckForUnicodeNames>0)
 		{
 
 			if(TrackNameChangesTriggered[client]==true)
