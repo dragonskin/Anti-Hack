@@ -451,8 +451,6 @@ Aimbot_Detected(client, const Float:deviation, bool:HighSensitivity)
 			}
 		}
 	}
-
-	CloseHandle(info);
 }
 
 Aimbot_ClearAngles(client)
