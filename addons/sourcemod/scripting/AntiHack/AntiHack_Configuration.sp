@@ -12,6 +12,11 @@ public AntiHack_Configuration_OnPluginStart()
 	h_antihack_Efilter=						CreateConVar("antihack_wordsearch_extremefilter",		"0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
 	h_antihack_prevent_name_copying=		CreateConVar("antihack_prevent_name_copying",			"1","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
 
+	// Disabled by default.
+	// High Sensitivity Mode is designed as a early warning system,
+	// to give admins a heads up before the actual detection.
+	h_HighSensitivityModeEnabled=			CreateConVar("antihacker_hs_enabled",					"0");
+
 	HookConVarChange(h_antihack_Efilter,					wordsearch_convar_changed);
 	HookConVarChange(h_antihack_ban,						ban_convar_changed);
 	HookConVarChange(h_CheckForSimilarNames,				CheckForSimilarNames_convar_changed);
@@ -19,6 +24,14 @@ public AntiHack_Configuration_OnPluginStart()
 	HookConVarChange(h_DatabaseName,						DatabaseName_convar_changed);
 	HookConVarChange(h_AutosaveTime,						autosavetime_convar_changed);
 	HookConVarChange(h_SaveEnabled,							save_enabled_convar_changed);
+
+	HookConVarChange(h_HighSensitivityModeEnabled,			hs_enabled_convar_changed);
+}
+
+public hs_enabled_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
+{
+	if(convar == h_HighSensitivityModeEnabled)
+		g_bHighSensitivityModeEnabled = bool:StringToInt(newValue);
 }
 
 public save_enabled_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
