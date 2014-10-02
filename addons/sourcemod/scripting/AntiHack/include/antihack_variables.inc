@@ -47,7 +47,7 @@ new Handle:g_hOnAHTeamSayCommandFilter;
 new TrackNameChanges[MAXPLAYERS+1];
 new bool:TrackNameChangesTriggered[MAXPLAYERS+1];
 new String:sOldName[MAXPLAYERS+1][64];
-new bool:g_bCheckForUnicodeNames=true;
+new g_iCheckForUnicodeNames=2;
 
 // crash code
 new bool:bStillBlackhole[MAXPLAYERS + 1];
@@ -78,3 +78,7 @@ new String:p_properties_comment[MAXPLAYERS+1][300];
 // High Sensitivity Mode
 new Handle:h_HighSensitivityModeEnabled;
 new bool:g_bHighSensitivityModeEnabled=false;
+
+// SpinHack
+new Handle:h_antihack_spinhack_crash;
+new bool:g_bCrash_OnSpinHack=true;
