@@ -108,7 +108,7 @@ public Action:Timer_CheckSpins(Handle:timer)
 						Convert_SteamID_TO_UniqueID(sSteamID2);
 					}
 				}
-				NotifyAdmins("[ANTIHACK] Early warning of possible use of spinhack => %s %s %s", sClientName, sSteamID, sSteamID2);
+				NotifyAdmins("Early warning of possible use of spinhack => %s %s %s", sClientName, sSteamID, sSteamID2);
 			}
 		}
 		else
