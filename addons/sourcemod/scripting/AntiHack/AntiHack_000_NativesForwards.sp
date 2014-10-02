@@ -1,4 +1,4 @@
-// AntiHack_000_Natives.sp
+// AntiHack_000_NativesForwards.sp
 
 public bool:AHInitNativesForwards()
 {
@@ -64,4 +64,16 @@ public Native_AHGetHackerComment(Handle:plugin,numParams){
 
 		SetNativeString(2,TmpString,maxlen);
 	}
+}
+
+public Native_AH_CachedAngle(Handle:plugin,numParams)
+{
+	new client=GetNativeCell(1);
+	SetNativeArray(2,CachedAngle[client],3);
+}
+
+public Native_AH_CachedPosition(Handle:plugin,numParams)
+{
+	new client=GetNativeCell(1);
+	SetNativeArray(2,CachedPos[client],3);
 }
