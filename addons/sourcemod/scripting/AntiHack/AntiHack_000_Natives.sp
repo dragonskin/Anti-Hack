@@ -19,6 +19,8 @@ public bool:AHInitNativesForwards()
 	CreateNative("AHSetHackerComment",Native_AHSetHackerComment);
 	CreateNative("AHGetHackerComment",Native_AHGetHackerComment);
 
+	g_OnAHPlayerLoadData=CreateGlobalForward("OnAHPlayerLoadData",ET_Ignore,Param_Cell);
+
 	CreateNative("AH_CachedAngle",Native_AH_CachedAngle);
 	CreateNative("AH_CachedPosition",Native_AH_CachedPosition);
 
