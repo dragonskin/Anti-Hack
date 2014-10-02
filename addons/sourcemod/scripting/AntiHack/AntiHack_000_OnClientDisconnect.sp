@@ -8,5 +8,6 @@ public OnClientDisconnect(client)
 		TrackNameChangesTriggered[client]=false;
 	}
 	AH_Database_OnClientDisconnect(client);
+	SpinHack_Detection_OnClientDisconnect(client);
 }
 
