@@ -90,6 +90,25 @@ public Action:Timer_CheckSpins(Handle:timer)
 			{
 				Spinhack_Detected(i);
 			}
+
+			if (g_bSpinhack_warning && g_iSpinCount[i] == (SPIN_DETECTIONS-5) && g_fSensitivity[i] <= SPIN_SENSITIVITY)
+			{
+				decl String:sClientName[128];
+				GetClientName(client,sClientName,sizeof(sClientName));
+
+				decl String:sSteamID[64],String:sSteamID2[64];
+
+				GetClientAuthString(client, sSteamID2, sizeof(sSteamID2));
+				strcopy(sSteamID, sizeof(sSteamID), sSteamID2);
+				if(GAMETF)
+				{
+					if(!Convert_UniqueID_TO_SteamID(sSteamID2))
+					{
+						Convert_SteamID_TO_UniqueID(sSteamID2);
+					}
+				}
+				NotifyAdmins("[ANTIHACK] Early warning of possible use of spinhack => %s %s %s", sClientName, sSteamID, sSteamID2);
+			}
 		}
 		else
 		{
