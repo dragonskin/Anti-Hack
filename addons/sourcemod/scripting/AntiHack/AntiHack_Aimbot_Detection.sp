@@ -390,8 +390,8 @@ Aimbot_Detected(client, const Float:deviation, bool:HighSensitivity)
 				}
 				else
 				{
-					NotifyAdmins("%s %s [HIGH SENITIVITY] (Detection #%i | Deviation: %.0f° | Weapon: %s)", sClientName, sSteamID, g_iAimDetections[client], deviation, sWeapon);
-					AntiHackLog("%s %s [HIGH SENITIVITY] (Detection #%i | Deviation: %.0f° | Weapon: %s)", sClientName, sSteamID, g_iAimDetections[client], deviation, sWeapon);
+					NotifyAdmins("%s %s is suspected of using an aimbot. (Detection #%i | Deviation: %.0f° | Weapon: %s)", sClientName, sSteamID, g_iAimDetections[client], deviation, sWeapon);
+					AntiHackLog("%s %s is suspected of using an aimbot. (Detection #%i | Deviation: %.0f° | Weapon: %s)", sClientName, sSteamID, g_iAimDetections[client], deviation, sWeapon);
 				}
 			}
 			else
