@@ -27,7 +27,7 @@
 #define VERSION_NUM "1.0.0.0"
 #define AUTHORS "The AntiHack Team"
 
-#define ANTIHACK
+//#define ANTIHACK
 
 #include <sourcemod>
 #include <antihack>
@@ -166,19 +166,6 @@ public Action:SMAC_OnCheatDetected(client, const String:module[], DetectionType:
 		}
 	}
 	return Plugin_Continue;
-}
-
-public Action:Timer_DecreaseCount(Handle:timer, any:userid)
-{
-	/* Decrease the detection count by 1. */
-	new client = GetClientOfUserId(userid);
-
-	if (IS_CLIENT(client) && g_iAimDetections[client])
-	{
-		g_iAimDetections[client]--;
-	}
-
-	return Plugin_Stop;
 }
 
 public FilterType:filter_words(client, String:user_command[192])
