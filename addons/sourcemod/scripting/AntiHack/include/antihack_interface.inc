@@ -349,9 +349,18 @@ stock NotifyAdmins(const String:reason[]="", any:...)
 
 	for(new r = 1; r <= MaxClients; r++)
 	{
-		if (IsClientInGame(r) && CheckCommandAccess(r, "smac_admin_notices", ADMFLAG_GENERIC, true))
+		if (IsClientInGame(r) && CheckCommandAccess(r, "antihack_admin_notices", ADMFLAG_GENERIC, true))
 		{
-			CPrintToChat(r,"{red}[ANTIHACK] %s", LogThis);
+			if(GAMECOLOR)
+			{
+				CPrintToChat(r,"{red}[ANTIHACK] %s", LogThis);
+			}
+			else
+			{
+				//Don't think I need this, but keeping it here just in case
+				//CRemoveTags(LogThis);
+				PrintToChat(r,"[ANTIHACK] %s", LogThis);
+			}
 		}
 	}
 
@@ -806,6 +815,15 @@ stock AHSQLPlayerFloat(Handle:query,const String:columnname[]) //fech from query
 	decl String:result[16];
 	SQL_FetchString(query,column,result,sizeof(result));
 	return StringToFloat(result);
+}
+public bool:SQL_FastQueryLogOnError(Handle:DB,const String:query[]) {
+	if(!SQL_FastQuery(DB,query)) {
+		new String:error[256];
+		SQL_GetError(DB, error, sizeof(error));
+		LogError("SQLFastQuery %s failed, Error: %s",query,error);
+		return false;
+	}
+	return true;
 }
 
 //#define MAX_MESSAGE_LENGTH 250
