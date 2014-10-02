@@ -19,10 +19,10 @@ Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti
 Currently still in development.
 
 
-Plans:
-
-* You will also be able to use Anti-Hack as a way to "filter out" hacking words from your other plugins using it's say & say team forwards.
-* Optionally crashes hackers whom do certain hacks on your server
-* 
+To-Do-List:
+* Need to detect if SMACS is on a server owner's system, and warn them in a log file that they may want to remove certain modules while running Anti-Hack.  Anti-Hack can run along side SMACS, but certain modules will be almost doing the same thing and wasting cpu power.
+* Add Eye Angles Checking module w/ High Sensitivity Mode
+* Create Convars to allow server owners to toggle on/off any system (spinhack detection, aimbot detection, etc)
+* Add Anti-Wall hacking module
 
 Configure Anti-Hack: https://github.com/War3Evo/Anti-Hack/wiki/Configuration-(server.cfg)
