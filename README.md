@@ -7,6 +7,12 @@ Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti
 * SMACS modified for early detections (High Sensitivity Mode)
 * optional (sourcebans)
 * High Sensitivity Mode (Detect hacking users before the "acutal detection" or detect them trying to "beat SMACS").
+* Uses both the Old Steam ID and the New Steam ID for TF2 Games
+* Relies on the User's Account ID instead of Steam ID for the database.
+* Prevent Name Copying
+* Filter Hacking Ads
+* Check and Prevent Unicode Name changing
+
 
 
 Currently still in development.
