@@ -2,18 +2,20 @@
 
 public AntiHack_Configuration_OnPluginStart()
 {
-	h_DatabaseName=							CreateConVar("antihacker_database",						"antihack");
-	h_SaveEnabled=							CreateConVar("antihacker_save_enabled",					"1");
-	h_AutosaveTime=							CreateConVar("antihacker_autosavetime",					"300.0");
-	h_CheckForUnicodeNames = 				CreateConVar("antihack_check_unicode_name_changing",	"2","0 - Disables\nDoes not filter the name, but checks if they name contains banned unicode characters and allows up to X number of times before Anti-Hack takes action.");
-	h_Prevent_name_copying = 				CreateConVar("antihack_prevent_name_copying",			"1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for name copying.\nIt is more aggressive than the Unicode Checker");
+	h_DatabaseName=							CreateConVar("ah_database",										"antihack");
+	h_SaveEnabled=							CreateConVar("ah_save_enabled",									"1");
+	h_AutosaveTime=							CreateConVar("ah_autosavetime",									"300.0");
+	h_CheckForUnicodeNames = 				CreateConVar("ah_check_unicode_name_changing",					"2","0 - Disables\nDoes not filter the name, but checks if they name contains banned unicode characters and allows up to X number of times before Anti-Hack takes action.");
+	h_Prevent_name_copying = 				CreateConVar("ah_prevent_name_copying",							"1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for name copying.\nIt is more aggressive than the Unicode Checker");
 
-	h_antihack_ban=							CreateConVar("antihack_ban",							"0","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players it can not control.");
+	h_antihack_ban=							CreateConVar("ah_ban",											"0","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players it can not control.");
 
-	h_antihack_filter_location=				CreateConVar("antihack_wordsearch_location",			"configs/hacking_advertisment_filter.cfg","default location:\nconfigs/hacking_advertisment_filter.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
-	h_antihack_Efilter=						CreateConVar("antihack_wordsearch_extremefilter",		"0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
+	h_antihack_filter_location=				CreateConVar("ah_wordsearch_location",							"configs/hacking_advertisment_filter.cfg","default location:\nconfigs/hacking_advertisment_filter.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
+	h_antihack_Efilter=						CreateConVar("ah_wordsearch_extremefilter",						"0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
 
-	h_antihack_spinhack_crash=				CreateConVar("antihack_spinhack_crash",					"1","1 - Enabled / 0 - Disable\nAllow AntiHack to crash clients whom spinhack.");
+	h_antihack_spinhack_crash=				CreateConVar("ah_spinhack_crash",								"1","1 - Enabled / 0 - Disable\nAllow AntiHack to crash clients whom spinhack.");
+
+	h_antihack_spinhack_warning=			CreateConVar("ah_spinhack_early_warning",						"0","1 - Enabled / 0 - Disable\nAnti-Hack will alert admins ahead of time about possible spinhack,\nbefore the actual detection.");
 
 	// Disabled by default.
 	// High Sensitivity Mode is designed as a early warning system,
@@ -29,8 +31,14 @@ public AntiHack_Configuration_OnPluginStart()
 	HookConVarChange(h_antihack_filter_location,			filter_location_convar_changed);
 	HookConVarChange(h_Prevent_name_copying,				prevent_name_copying_convar_changed);
 	HookConVarChange(h_HighSensitivityModeEnabled,			hs_enabled_convar_changed);
-
 	HookConVarChange(h_antihack_spinhack_crash,				spinhack_crash_convar_changed);
+	HookConVarChange(h_antihack_spinhack_warning,			spinhack_warning_convar_changed);
+}
+
+public spinhack_warning_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
+{
+	if(convar == h_antihack_spinhack_warning)
+		g_bSpinhack_warning = bool:StringToInt(newValue);
 }
 
 public spinhack_crash_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
