@@ -145,7 +145,7 @@ public Teleport_OnEndTouch(const String:output[], caller, activator, Float:delay
 	}
 }
 
-AntiHack_Aimbot_Detection_PlayerSpawn(client)
+AntiHack_Aimbot_Detection_PlayerSpawn(client,userid)
 {
 	if (IS_CLIENT(client))
 	{
