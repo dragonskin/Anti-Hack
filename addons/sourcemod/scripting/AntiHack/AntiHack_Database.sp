@@ -10,6 +10,7 @@ AH_Database_SetPlayerDefaults(client)
 	AHSetHackerProp(client,bChanceOnHit,false);
 	AHSetHackerProp(client,bNoDamage,false);
 	AHSetHackerProp(client,iAimbotCount,0);
+	AHSetHackerProp(client,iHSAimbotCount,0);
 	AHSetHackerProp(client,iSpinhackCount,0);
 	AHSetHackerProp(client,iEyeAnglesCount,0);
 	AHSetHackerProp(client,iTamperingButtonsCount,0);
@@ -132,7 +133,7 @@ public SQLCallback_PlayerJoin(Handle:db, Handle:hndl, const String:error[], any:
 			new String:query[3000];
 			Format(query, sizeof(query), "SELECT `player_id`, `sComment`,`player_auth`, UNIX_TIMESTAMP(`iFirstTimeHacked`), UNIX_TIMESTAMP(`iLastTimeHacked`), \
 			`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, \
-			`iAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
+			`iAimbotCount`, `iHSAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
 			`iTamperingButtonsCount`, `iTamperingTickcountCount`, `iReusingMovementCommandsCount`, \
 			`iTamperingViewAnglesAimbotCount`, `iCrashed` FROM `antihack_tracking` WHERE `player_id` = '%d';", AHGetHackerProp(client,iPlayerID));
 			SQL_TQuery(hDB, SQLCallback_LookupPlayer, query, GetClientUserId(client));
@@ -280,6 +281,8 @@ public SQLCallback_LookupPlayer(Handle:owner,Handle:hndl,const String:error[],an
 
 				AHSetHackerProp(client,iAimbotCount,AHSQLPlayerInt(hndl,"iAimbotCount"));
 
+				AHSetHackerProp(client,iHSAimbotCount,AHSQLPlayerInt(hndl,"iHSAimbotCount"));
+
 				AHSetHackerProp(client,iSpinhackCount,AHSQLPlayerInt(hndl,"iSpinhackCount"));
 
 				AHSetHackerProp(client,iEyeAnglesCount,AHSQLPlayerInt(hndl,"iEyeAnglesCount"));
@@ -343,11 +346,11 @@ stock AH_SaveHackerData(client)
 
 					new String:query[3000];
 					Format(query, sizeof(query), "UPDATE antihack_tracking SET player_name='%s', sComment='%s', iFirstTimeHacked=FROM_UNIXTIME('%d'), iLastTimeHacked=FROM_UNIXTIME('%d'), \
-					bIsHacker='%d', bAntiAimbot='%d', bChanceOnHit='%d', bNoDamage='%d', iAimbotCount='%d', iSpinhackCount='%d', iEyeAnglesCount='%d', \
+					bIsHacker='%d', bAntiAimbot='%d', bChanceOnHit='%d', bNoDamage='%d', iAimbotCount='%d', iHSAimbotCount='%d', iSpinhackCount='%d', iEyeAnglesCount='%d', \
 					iTamperingButtonsCount='%d', iTamperingTickcountCount='%d', iReusingMovementCommandsCount='%d', \
 					iTamperingViewAnglesAimbotCount='%d', iCrashed='%d' WHERE player_id='%d';", newshortname, newComment, AHGetHackerProp(client,iFirstTimeHacked), AHGetHackerProp(client,iLastTimeHacked),
 					AHGetHackerProp(client,bIsHacker), AHGetHackerProp(client,bAntiAimbot), AHGetHackerProp(client,bChanceOnHit),
-					AHGetHackerProp(client,bNoDamage), AHGetHackerProp(client,iAimbotCount), AHGetHackerProp(client,iSpinhackCount),
+					AHGetHackerProp(client,bNoDamage), AHGetHackerProp(client,iAimbotCount), AHGetHackerProp(client,iHSAimbotCount), AHGetHackerProp(client,iSpinhackCount),
 					AHGetHackerProp(client,iEyeAnglesCount), AHGetHackerProp(client,iTamperingButtonsCount), AHGetHackerProp(client,iTamperingTickcountCount),
 					AHGetHackerProp(client,iReusingMovementCommandsCount), AHGetHackerProp(client,iTamperingViewAnglesAimbotCount), AHGetHackerProp(client,iCrashed), AHGetHackerProp(client,iPlayerID));
 					SQL_TQuery(hDB, SQLCallback_Void, query, sizeof(query));
@@ -376,12 +379,12 @@ stock AH_SaveHackerData(client)
 
 					new String:query[3000];
 					Format(query, sizeof(query), "INSERT INTO `antihack_tracking`(`player_name`, `sComment`, `player_auth`, `iFirstTimeHacked`, `iLastTimeHacked`, \
-					`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, `iAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
+					`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, `iAimbotCount`, `iHSAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
 					`iTamperingButtonsCount`, `iTamperingTickcountCount`, `iReusingMovementCommandsCount`, \
 					`iTamperingViewAnglesAimbotCount`, `iCrashed`) VALUES('%s', '%s', '%d', FROM_UNIXTIME('%d'), FROM_UNIXTIME('%d'), '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');",
 					newshortname, newComment, UserAccountID, AHGetHackerProp(client,iFirstTimeHacked), AHGetHackerProp(client,iLastTimeHacked),
 					AHGetHackerProp(client,bIsHacker), AHGetHackerProp(client,bAntiAimbot), AHGetHackerProp(client,bChanceOnHit),
-					AHGetHackerProp(client,bNoDamage), AHGetHackerProp(client,iAimbotCount), AHGetHackerProp(client,iSpinhackCount),
+					AHGetHackerProp(client,bNoDamage), AHGetHackerProp(client,iAimbotCount), AHGetHackerProp(client,iHSAimbotCount), AHGetHackerProp(client,iSpinhackCount),
 					AHGetHackerProp(client,iEyeAnglesCount), AHGetHackerProp(client,iTamperingButtonsCount), AHGetHackerProp(client,iTamperingTickcountCount),
 					AHGetHackerProp(client,iReusingMovementCommandsCount), AHGetHackerProp(client,iTamperingViewAnglesAimbotCount), AHGetHackerProp(client,iCrashed));
 					SQL_TQuery(hDB, SQLCallback_Void, query, sizeof(query));
