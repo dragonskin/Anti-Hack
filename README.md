@@ -3,7 +3,8 @@ Anti-Hack - Currently still in development.
 
 Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti-Hack.
 
-
+* SMACS imported and modified (GNU GPL v3 copyright headers included)
+* SMACS modified for early detections (High Sensitivity Mode)
 * optional (sourcebans)
 
 
