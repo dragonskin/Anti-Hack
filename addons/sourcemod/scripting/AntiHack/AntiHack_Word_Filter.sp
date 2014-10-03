@@ -169,7 +169,7 @@ public Action:AH_SayCommand(client,args)
 
 		strcopy(filtered_command, 192, msg);
 
-		//if(StrContains(msg,"testcrash")>=0)
+		//if(StrContains(msg,"crash")>=0)
 		//{
 			//PrintToChatAll(msg);
 			//CrashClient(client);
