@@ -14,7 +14,7 @@ public AntiHack_Configuration_OnPluginStart()
 	h_antihack_filter_location=				CreateConVar("ah_wordsearch_location",							"configs/antihack/hacking_advertisment_filter.cfg","default location:\nconfigs/antihack/hacking_advertisment_filter.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
 	h_antihack_Efilter=						CreateConVar("ah_wordsearch_extremefilter",						"0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
 
-	h_antihack_spinhack_crash=				CreateConVar("ah_spinhack_crash",								"2","0 - Disable\nAllow AntiHack to crash clients whom spinhack after X number of times.");
+	h_antihack_spinhack_crash=				CreateConVar("ah_spinhack_crash",								"2","0 - Disable\nAllow AntiHack to crash clients whom spinhack at X number of times.");
 
 	h_antihack_spinhack_warning=			CreateConVar("ah_spinhack_early_warning",						"1","1 - Enabled / 0 - Disable\nAnti-Hack will alert admins ahead of time about possible spinhack,\nbefore the actual detection.");
 
