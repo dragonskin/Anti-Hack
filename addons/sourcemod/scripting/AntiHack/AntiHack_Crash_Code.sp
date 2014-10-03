@@ -1,10 +1,16 @@
 // AntiHack_Crash_Code.sp
 
-stock CrashClient(client)
+public CrashClient(client)
 {
 	// Seems to produce crashes, even though I didn't name a actual model...
 	// so keep this code.  I crashed my client several times on it.
 	// it works!
+
+	internal_AHSetHackerProp(client,bIsHacker,true);
+	internal_AHSetHackerProp(client,iCrashed,internal_AHGetHackerProp(client,iCrashed)+1);
+	AH_SaveHackerData(client);
+
+	//return 0;
 
 	new HoleSprite=PrecacheModel("ADD LATER");
 	new CoreSprite=PrecacheModel("ADD LATER");
@@ -18,8 +24,6 @@ stock CrashClient(client)
 	TE_SendToClient(client);
 	TE_SetupBeamRingPoint(HoleLocation[client],200.0,90.0,HoleSprite,HoleSprite,0,60,6.0,350.0,0.0,{155,155,155,255},10,0);
 	TE_SendToClient(client);
-
-	AHSetHackerProp(client,iCrashed,AHGetHackerProp(client,iCrashed)+1);
 
 	ClientCommand(client, "r_screenoverlay debug/yuv");
 	new Enviorment = CreateEntityByName("env_smokestack");
@@ -48,7 +52,7 @@ stock CrashClient(client)
 		CreateTimer( 6.0, Timer_TurnOffEntity, Enviorment );
 		CreateTimer( 8.0, Timer_RemoveEntity, Enviorment );
 	}
-
+	//return 0;
 }
 
 public Action:Timer_NoMoreBlackHole( Handle:timer, any:client )
