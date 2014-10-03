@@ -87,6 +87,7 @@ public Action:Timer_CheckSpins(Handle:timer)
 				QueryClientConVar(i, "sensitivity", Query_MouseCheck, GetClientUserId(i));
 			}
 
+			// for debug only:
 			//if(!g_bSpinhack_warning)
 			//{
 				//NotifyAdmins("Early warning system offline");
@@ -182,10 +183,10 @@ Spinhack_Detected(client)
 		AntiHackLog("%s %s is suspected of using a spinhack.", sClientName, sSteamID);
 	}
 
-	if(++g_iSpinhack_Detections[client]>g_iCrash_OnSpinHack)
+	if(++g_iSpinhack_Detections[client]>=g_iCrash_OnSpinHack)
 	{
-		//CrashClient(client);
+		CrashClient(client);
 		NotifyAdmins("%s %s has been handled by Anti-Hack.", sClientName, sSteamID);
-		AntiHackLog("%s %s >> Crashed Client", sClientName, sSteamID);
+		AntiHackLog("%s %s %s >> Crashed Client", sClientName, sSteamID, sSteamID2);
 	}
 }
