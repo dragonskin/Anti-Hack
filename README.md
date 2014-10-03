@@ -5,7 +5,7 @@ AntiHack will compile and run, but it is now considered ALPHA!   Use at your own
 
 Tested:
 * SpinHack Detection (works)
-* Crash System (works)
+* Crash System (TF2 tested & works, other systems still need a crash test)
 * Database (creation works) (inserting and updating now works)
 * Prevent Name Copying on Join (works) - renames player to their userid
 * Prevent Name Copying on name change (works) - renames player to their userid
