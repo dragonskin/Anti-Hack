@@ -1,6 +1,6 @@
 // AntiHack_Word_Filter.sp
 
-public OnClientPostAdminCheck(client)
+public Word_Filter_OnClientPostAdminCheck(client)
 {
 	if(ValidPlayer(client))
 	{
