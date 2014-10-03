@@ -1,8 +1,10 @@
 // AntiHack_Database.sp
 
+#define DATABASE_VERSION "1.0.0.0A"
+
 AH_Database_SetPlayerDefaults(client)
 {
-	AHSetHackerProp(client,iPlayerID,-1);
+	AHSetHackerProp(client,iPlayerID,0);
 	AHSetHackerProp(client,iFirstTimeHacked,0);
 	AHSetHackerProp(client,iLastTimeHacked,0);
 	AHSetHackerProp(client,bIsHacker,false);
@@ -47,6 +49,7 @@ public Initialize_SQLTable()
 			Format(createtable,sizeof(createtable),
 			"CREATE TABLE IF NOT EXISTS `antihack_tracking` ( \
 			`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT, \
+			`db_version` varchar(9) DEFAULT NULL, \
 			`player_name` varchar(300) DEFAULT NULL, \
 			`sComment` varchar(300) DEFAULT NULL, \
 			`player_auth` int(11) DEFAULT NULL, \
@@ -69,7 +72,7 @@ public Initialize_SQLTable()
 			`iCrashed` int(11) DEFAULT NULL, \
 			PRIMARY KEY (`player_id`), \
 			UNIQUE KEY `player_steam_auth` (`player_auth`, `steam2id`, `steam3id`) \
-			) ENGINE=InnoDB AUTO_INCREMENT=1 %s",
+			) ENGINE=InnoDB AUTO_INCREMENT=0 %s",
 			g_SQLType==SQLType_MySQL?"DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci":"" );
 
 			if(!SQL_FastQueryLogOnError(hDB,createtable))
@@ -179,7 +182,7 @@ public SQLCallback_PlayerJoin(Handle:db, Handle:hndl, const String:error[], any:
 	if(hndl == INVALID_HANDLE)
 	{
 		LogError("SQLCallback_PlayerJoin: Error looking up player. %s.", error);
-		AHSetHackerProp(client,iPlayerID,-1);
+		AHSetHackerProp(client,iPlayerID,0);
 	}
 	else
 	{
@@ -194,7 +197,7 @@ public SQLCallback_PlayerJoin(Handle:db, Handle:hndl, const String:error[], any:
 			SQL_FetchRow(hndl);
 			AHSetHackerProp(client,iPlayerID,SQL_FetchInt(hndl, 0));
 			new String:query[3000];
-			Format(query, sizeof(query), "SELECT `player_id`, `sComment`,`player_auth`, UNIX_TIMESTAMP(`iFirstTimeHacked`), UNIX_TIMESTAMP(`iLastTimeHacked`), \
+			Format(query, sizeof(query), "SELECT `sComment`, UNIX_TIMESTAMP(`iFirstTimeHacked`), UNIX_TIMESTAMP(`iLastTimeHacked`), \
 			`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, \
 			`iAimbotCount`, `iHSAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
 			`iTamperingButtonsCount`, `iTamperingTickcountCount`, `iReusingMovementCommandsCount`, \
@@ -217,7 +220,7 @@ stock AH_AntiHackerDeletePlayer(client)
 {
 	if (ValidPlayer(client))
 	{
-		if(AHGetHackerProp(client,iPlayerID) > -1)
+		if(AHGetHackerProp(client,iPlayerID) > 0)
 		{
 			new String:query[256];
 			Format(query, sizeof(query), "DELETE FROM `antihack_tracking` WHERE `player_id`='%d';", AHGetHackerProp(client,iPlayerID));
@@ -385,11 +388,14 @@ public bool:AH_SaveHackerData(client)
 	if(hDB && ValidPlayer(client) && !IsFakeClient(client) && g_bSaveEnabled)
 	{
 		new UserAccountID = GetSteamAccountID(client);
+		DP("UserAccountID %d",UserAccountID);
 		if(UserAccountID>0)
 		{
 				PrintToServer("PLAYER ID: %d",AHGetHackerProp(client,iPlayerID));
-				if(AHGetHackerProp(client,iPlayerID) > -1)
+				if(AHGetHackerProp(client,iPlayerID) > 0)
 				{
+					DP("iPlayerID %d",iPlayerID);
+
 					//PrintToServer("BEFORE SQL SAVING");
 
 					new String:sHackerName[128];
@@ -422,6 +428,8 @@ public bool:AH_SaveHackerData(client)
 				}
 				else if(AHGetHackerProp(client,bIsHacker))
 				{
+					DP("bIsHacker true");
+
 					AntiHackLog("Create New Hacker Profile");
 
 					AHSetHackerProp(client,iFirstTimeHacked,GetTime());
@@ -454,16 +462,24 @@ public bool:AH_SaveHackerData(client)
 					}
 
 					new String:query[3000];
-					Format(query, sizeof(query), "INSERT INTO `antihack_tracking`(`player_name`, `sComment`, `player_auth`, `steam2id`, `steam3id`, `iFirstTimeHacked`, `iLastTimeHacked`, \
-					`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, `iAimbotCount`, `iHSAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
+					Format(query, sizeof(query), "INSERT INTO `antihack_tracking`(`db_version`, `player_name`, `sComment`, \
+					`player_auth`, `steam2id`, `steam3id`, `iFirstTimeHacked`, `iLastTimeHacked`, \
+					`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, \
+					`iAimbotCount`, `iHSAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
 					`iTamperingButtonsCount`, `iTamperingTickcountCount`, `iReusingMovementCommandsCount`, \
-					`iTamperingViewAnglesAimbotCount`, `iCrashed`) VALUES('%s', '%s', '%d', FROM_UNIXTIME('%d'), FROM_UNIXTIME('%d'), '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');",
-					newshortname, newComment, UserAccountID, sSteamID, sSteamID2, AHGetHackerProp(client,iFirstTimeHacked), AHGetHackerProp(client,iLastTimeHacked),
-					AHGetHackerProp(client,bIsHacker), AHGetHackerProp(client,bAntiAimbot), AHGetHackerProp(client,bChanceOnHit),
-					AHGetHackerProp(client,bNoDamage), AHGetHackerProp(client,iAimbotCount), AHGetHackerProp(client,iHSAimbotCount), AHGetHackerProp(client,iSpinhackCount),
-					AHGetHackerProp(client,iEyeAnglesCount), AHGetHackerProp(client,iTamperingButtonsCount), AHGetHackerProp(client,iTamperingTickcountCount),
-					AHGetHackerProp(client,iReusingMovementCommandsCount), AHGetHackerProp(client,iTamperingViewAnglesAimbotCount), AHGetHackerProp(client,iCrashed));
+					`iTamperingViewAnglesAimbotCount`, `iCrashed`) \
+					VALUES('%s', '%s', '%s', '%d', '%s', '%s', \
+					FROM_UNIXTIME('%d'), FROM_UNIXTIME('%d'), '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');",
+					DATABASE_VERSION, newshortname, newComment,
+					UserAccountID, sSteamID, sSteamID2, AHGetHackerProp(client,iFirstTimeHacked), AHGetHackerProp(client,iLastTimeHacked),
+					AHGetHackerProp(client,bIsHacker), AHGetHackerProp(client,bAntiAimbot), AHGetHackerProp(client,bChanceOnHit), AHGetHackerProp(client,bNoDamage),
+					AHGetHackerProp(client,iAimbotCount), AHGetHackerProp(client,iHSAimbotCount), AHGetHackerProp(client,iSpinhackCount), AHGetHackerProp(client,iEyeAnglesCount),
+					AHGetHackerProp(client,iTamperingButtonsCount), AHGetHackerProp(client,iTamperingTickcountCount),
+					AHGetHackerProp(client,iReusingMovementCommandsCount), AHGetHackerProp(client,iTamperingViewAnglesAimbotCount),
+					AHGetHackerProp(client,iCrashed));
 					SQL_TQuery(hDB, SQLCallback_Void, query, sizeof(query));
+
+					AntiHackLog(query);
 
 					Format(query, sizeof(query), "SELECT LAST_INSERT_ID();");
 					SQL_TQuery(hDB, SQLCallback_LastInsertID, query, GetClientUserId(client));
