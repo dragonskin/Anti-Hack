@@ -167,8 +167,12 @@ public AntiHack_Aimbot_Detection_PlayerDeath(Handle:event,victim,attacker,inflic
 		if (IS_CLIENT(victim) && IS_CLIENT(attacker) && victim != attacker && IsClientInGame(victim) && IsClientInGame(attacker))
 		{
 			decl Float:vVictim[3], Float:vAttacker[3];
-			GetClientAbsOrigin(victim, vVictim);
-			GetClientAbsOrigin(attacker, vAttacker);
+
+			vVictim = CachedPos[victim];
+			vAttacker = CachedPos[attacker];
+
+			//GetClientAbsOrigin(victim, vVictim);
+			//GetClientAbsOrigin(attacker, vAttacker);
 
 			if (GetVectorDistance(vVictim, vAttacker) >= AIM_MIN_DISTANCE)
 			{
@@ -187,8 +191,12 @@ public AntiHack_Aimbot_Detection_PlayerDeath(Handle:event,victim,attacker,inflic
 				return;
 
 			decl Float:vVictim[3], Float:vAttacker[3];
-			GetClientAbsOrigin(victim, vVictim);
-			GetClientAbsOrigin(attacker, vAttacker);
+
+			vVictim = CachedPos[victim];
+			vAttacker = CachedPos[attacker];
+
+			//GetClientAbsOrigin(victim, vVictim);
+			//GetClientAbsOrigin(attacker, vAttacker);
 
 			if (GetVectorDistance(vVictim, vAttacker) >= AIM_MIN_DISTANCE)
 			{
@@ -238,6 +246,8 @@ public Action:Aimbot_Detection_OnPlayerRunCmd(client, &buttons, &impulse, Float:
 
 Aimbot_AnalyzeAngles(client)
 {
+	//DP("Aimbot_AnalyzeAngles");
+
 	/* Analyze the client to see if their angles snapped. */
 	decl Float:vLastAngles[3], Float:vAngles[3], Float:fAngleDiff;
 	new idx = g_iEyeIndex[client];
@@ -273,11 +283,13 @@ Aimbot_AnalyzeAngles(client)
 
 		if (fAngleDiff > AIM_ANGLE_CHANGE)
 		{
+			//DP("Aimbot_Detected AIM_ANGLE_CHANGE");
 			Aimbot_Detected(client, fAngleDiff,false);
 			break;
 		}
 		else if (fAngleDiff > AIM_ANGLE_CHANGE_HS)
 		{
+			//DP("Aimbot_Detected AIM_ANGLE_CHANGE_HS");
 			Aimbot_Detected(client, fAngleDiff,true);
 			break;
 		}
@@ -291,7 +303,8 @@ Aimbot_AnalyzeAngles(client)
 Aimbot_Detected(client, const Float:deviation, bool:HighSensitivity)
 {
 	// Extra checks must be done here because of data coming from two events.
-	if (IsFakeClient(client) || !IsPlayerAlive(client))
+	//if (IsFakeClient(client) || !IsPlayerAlive(client))
+	if (!IsPlayerAlive(client))
 		return;
 
 	switch (AH_GetGame())
