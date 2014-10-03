@@ -91,7 +91,8 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 	{
 		if(g_bPrevent_name_copying)
 		{
-			GetClientName(client,sTestName1,sizeof(sTestName1));
+			//GetClientName(client,sTestName1,sizeof(sTestName1));
+			strcopy(sTestName1, sizeof(sTestName1), sNewName);
 
 			FilterSentence(sTestName1);
 
