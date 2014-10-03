@@ -87,12 +87,12 @@ public Action:Timer_CheckSpins(Handle:timer)
 				QueryClientConVar(i, "sensitivity", Query_MouseCheck, GetClientUserId(i));
 			}
 
-			if (g_iSpinCount[i] == SPIN_DETECTIONS && g_fSensitivity[i] <= SPIN_SENSITIVITY)
-			{
-				Spinhack_Detected(i);
-			}
+			//if(!g_bSpinhack_warning)
+			//{
+				//NotifyAdmins("Early warning system offline");
+			//}
 
-			if (g_bSpinhack_warning && g_iSpinCount[i] == (SPIN_DETECTIONS-5) && g_fSensitivity[i] <= SPIN_SENSITIVITY)
+			if (g_bSpinhack_warning && (g_iSpinCount[i] > 9 && g_iSpinCount[i] < SPIN_DETECTIONS) && g_fSensitivity[i] <= SPIN_SENSITIVITY)
 			{
 				decl String:sClientName[128];
 				GetClientName(i,sClientName,sizeof(sClientName));
@@ -108,8 +108,14 @@ public Action:Timer_CheckSpins(Handle:timer)
 						Convert_SteamID_TO_UniqueID(sSteamID2);
 					}
 				}
-				NotifyAdmins("Early warning of possible use of spinhack => %s %s %s", sClientName, sSteamID, sSteamID2);
+				NotifyAdmins("[%d] Early warning of possible use of spinhack => %s %s %s", RoundToCeil(FloatAbs(FloatSub(float(g_iSpinCount[i]),float(SPIN_DETECTIONS)))), sClientName, sSteamID, sSteamID2);
 			}
+
+			if (g_iSpinCount[i] == SPIN_DETECTIONS && g_fSensitivity[i] <= SPIN_SENSITIVITY)
+			{
+				Spinhack_Detected(i);
+			}
+
 		}
 		else
 		{
@@ -176,9 +182,10 @@ Spinhack_Detected(client)
 		AntiHackLog("%s %s is suspected of using a spinhack.", sClientName, sSteamID);
 	}
 
-	if(g_iCrash_OnSpinHack>++g_iSpinhack_Detections[client])
+	if(++g_iSpinhack_Detections[client]>g_iCrash_OnSpinHack)
 	{
-		CrashClient(client);
+		//CrashClient(client);
+		NotifyAdmins("%s %s has been handled by Anti-Hack.", sClientName, sSteamID);
 		AntiHackLog("%s %s >> Crashed Client", sClientName, sSteamID);
 	}
 }
