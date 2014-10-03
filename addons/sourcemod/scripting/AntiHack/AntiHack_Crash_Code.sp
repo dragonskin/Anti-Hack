@@ -2,13 +2,9 @@
 
 stock CrashClient(client)
 {
-	// Will probably need to create a configuration file that can get updated:
-	// I don't want to possibly give away the models that the hacking software developers
-	// may try to force their clients to load and possibily prevent crashes.
-	//
-	// So, I will add this later as a configuration file to load that will
-	// allow updating the models to call if it is detected this system no
-	// longer crashes.
+	// Seems to produce crashes, even though I didn't name a actual model...
+	// so keep this code.  I crashed my client several times on it.
+	// it works!
 
 	new HoleSprite=PrecacheModel("ADD LATER");
 	new CoreSprite=PrecacheModel("ADD LATER");
