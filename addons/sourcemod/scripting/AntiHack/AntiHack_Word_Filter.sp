@@ -169,6 +169,13 @@ public Action:AH_SayCommand(client,args)
 
 		strcopy(filtered_command, 192, msg);
 
+		//if(StrContains(msg,"testcrash")>=0)
+		//{
+			//PrintToChatAll(msg);
+			//CrashClient(client);
+			//return Plugin_Continue;
+		//}
+
 		if(filter_words(client, filtered_command)==AH_Filter_Normal)
 		{
 			new Action:returnVal = Plugin_Continue;
@@ -182,6 +189,7 @@ public Action:AH_SayCommand(client,args)
 				return Plugin_Handled;
 			}
 		}
+		else return Plugin_Handled;
 	}
 	return Plugin_Continue;
 }
@@ -207,6 +215,7 @@ public Action:AH_TeamSayCommand(client,args)
 				return Plugin_Handled;
 			}
 		}
+		else return Plugin_Handled;
 	}
 	return Plugin_Continue;
 }
