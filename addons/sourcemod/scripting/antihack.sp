@@ -90,7 +90,7 @@ native IRC_Broadcast(IrcChannel:type, const String:format[], any:...);
 
 #include "AntiHack/AntiHack_Word_Filter.sp"
 
-//#include "AntiHack/"
+#include "AntiHack/AntiHack_000_OnClientPostAdminCheck.sp"
 //#include "AntiHack/"
 //#include "AntiHack/"
 //#include "AntiHack/"
@@ -154,6 +154,7 @@ public OnMapStart()
 	PrintToServer("OnMapStart");
 	ServerCommand("sm_rcon sv_namechange_cooldown_seconds 20");
 }
+
 
 public OnAllPluginsLoaded() //called once only, will not call again when map changes
 {
