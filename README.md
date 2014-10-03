@@ -7,6 +7,7 @@ Tested:
 * SpinHack Detection (works)
 * Crash System (works)
 * Database (creation works) (inserting and updating now works)
+* Prevent Name Copying on Join (works)
 
 
 Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti-Hack.
