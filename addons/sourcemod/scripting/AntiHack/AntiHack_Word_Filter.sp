@@ -1,6 +1,45 @@
 // AntiHack_Word_Filter.sp
 
+public OnClientPostAdminCheck(client)
+{
+	if(ValidPlayer(client))
+	{
+		new String:sStrName[128];
+		GetClientName(client, sStrName, sizeof(sStrName));
 
+		if(IsPotientalThreatWord(sStrName))
+		{
+				if(sourcebans_exists && AllowNameBans)
+				{
+#if defined _sourcebans_included
+					new String:player_authid[64];
+					if (!GetClientAuthString(client, player_authid, 64))
+					{
+						strcopy(player_authid, 64, "UNKNOWN");
+					}
+
+					Convert_UniqueID_TO_SteamID(player_authid);
+					AntiHackLog("Banned %s %s for having a Potiental Threat Word in thier name!", sStrName, player_authid);
+					SBBanPlayer(0, client, 0, "BANNED!");
+#endif
+				}
+				else
+				{
+					new String:player_authid[64];
+					if (!GetClientAuthString(client, player_authid, 64))
+					{
+						strcopy(player_authid, 64, "UNKNOWN");
+					}
+
+					Convert_UniqueID_TO_SteamID(player_authid);
+
+					NotifyAdmins("%s %s for has a Potiental Threat Word in thier name!", sStrName, player_authid);
+				}
+			//KickClient(client, "");
+			//ServerCommand("sm_addban 0 %s \"BANNED!!!\"",player_authid);
+		}
+	}
+}
 
 public FilterType:filter_words(client, String:user_command[])
 {
@@ -53,12 +92,15 @@ public FilterType:filter_words(client, String:user_command[])
 
 				for(new r = 1; r <= MaxClients; r++)
 				{
-					if (r>0 && r<=MaxClients && IsClientConnected(r) && IsClientInGame(r) && !IsFakeClient(r))
+					if (IsClientInGame(r) && CheckCommandAccess(r, "antihack_admin_notices", ADMFLAG_GENERIC, true))
 					{
-						new AdminId:ident = GetUserAdmin(r);
-						if (GetAdminFlag(ident, Admin_Kick))
+						if (GAMECOLOR)
 						{
 							CPrintToChat(r,"{cyan}[WARNING] {crimson}%s {white}has %d more chances before AntiHack acts against them! {cyan}Word was blocked and logged!", player_name, (3-Blocked_Players_ID[client]));
+						}
+						else
+						{
+							PrintToChat(r,"[WARNING] %s has %d more chances before AntiHack acts against them! Word was blocked and logged!", player_name, (3-Blocked_Players_ID[client]));
 						}
 					}
 				}
@@ -99,9 +141,9 @@ public FilterType:filter_words(client, String:user_command[])
 				//PrintToChat(client,"BAN");
 
 #if defined _sourcebans_included
-				if(AllowBans)
+				if(sourcebans_exists && AllowBans)
 				{
-					//SBBanPlayer(0, client, 0, "You win a free ban by AntiHack!");
+					SBBanPlayer(0, client, 0, "BANNED!");
 				}
 				//ServerCommand("sm_addban 0 %s \"check antihack logs\"",player_authid);
 #endif
