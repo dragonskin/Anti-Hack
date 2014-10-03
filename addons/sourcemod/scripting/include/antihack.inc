@@ -78,7 +78,7 @@ enum AHHackerProp
 forward OnAHPlayerLoadData(client);
 
 /**
- * Checks say command
+ * Checks say command and filters out hacking advertisements
  * OnAHSayCommandFilter has a ascii filter, that filters all characters that are not 32 - 126 ascii
  * See http://www.asciitable.com/
  *
@@ -90,7 +90,7 @@ forward OnAHPlayerLoadData(client);
 forward Action:OnAHSayCommandFilter(client,String:RawString[],String:FilteredString[]);
 
 /**
- * Checks Team say command
+ * Checks Team say command and filters out hacking advertisements
  * OnAHTeamSayCommandFilter has a ascii filter, that filters all characters that are not 32 - 126 ascii
  * See http://www.asciitable.com/
  *
