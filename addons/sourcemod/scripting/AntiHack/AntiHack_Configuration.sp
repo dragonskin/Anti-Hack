@@ -16,7 +16,7 @@ public AntiHack_Configuration_OnPluginStart()
 
 	h_antihack_spinhack_crash=				CreateConVar("ah_spinhack_crash",								"2","0 - Disable\nAllow AntiHack to crash clients whom spinhack after X number of times.");
 
-	h_antihack_spinhack_warning=			CreateConVar("ah_spinhack_early_warning",						"0","1 - Enabled / 0 - Disable\nAnti-Hack will alert admins ahead of time about possible spinhack,\nbefore the actual detection.");
+	h_antihack_spinhack_warning=			CreateConVar("ah_spinhack_early_warning",						"1","1 - Enabled / 0 - Disable\nAnti-Hack will alert admins ahead of time about possible spinhack,\nbefore the actual detection.");
 
 	// Disabled by default.
 	// High Sensitivity Mode is designed as a early warning system,
