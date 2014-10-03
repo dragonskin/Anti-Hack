@@ -28,10 +28,26 @@
 #define AUTHORS "The AntiHack Team"
 
 //#define ANTIHACK
+#undef REQUIRE_EXTENSIONS
+
+// Headers
+
+enum IrcChannel
+{
+	IrcChannel_Public  = 1,
+	IrcChannel_Private = 2,
+	IrcChannel_Both    = 3
+}
+
+native SBBanPlayer(client, target, time, String:reason[]);
+native IRC_MsgFlaggedChannels(const String:flag[], const String:format[], any:...);
+native IRC_Broadcast(IrcChannel:type, const String:format[], any:...);
 
 #include <sourcemod>
 #include <antihack>
 #include <sdktools>
+#include <sdktools_functions>
+#include <morecolors>
 
 // for crash code
 //#include <sdktools_tempents>
@@ -40,14 +56,17 @@
 //#include <sdktools_functions>
 //#include <sdktools_entinput>
 
-#tryinclude <sourcebans>
+//#tryinclude <sourcebans>
 
-#include "AntiHack/include/antihack_interface.inc"
+#include "AntiHack/include/antihack_variables.inc"
+#include "AntiHack/include/antihack_constants.inc"
 
 // Note the antihack_smac_*.inc file does not require smac,
 // it is just denoting that it contains some smac code:
 #include "AntiHack/include/antihack_smac_variables.inc"
 #include "AntiHack/include/antihack_smac_interface.inc"
+
+#include "AntiHack/include/antihack_interface.inc"
 
 #include "AntiHack/AntiHack_000_NativesForwards.sp"
 #include "AntiHack/AntiHack_000_OnClientAuthorized.sp"
