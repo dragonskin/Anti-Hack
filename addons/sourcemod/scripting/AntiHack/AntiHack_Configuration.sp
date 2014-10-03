@@ -11,7 +11,7 @@ public AntiHack_Configuration_OnPluginStart()
 	h_antihack_ban=							CreateConVar("ah_ban",											"0","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players it can not control.");
 	h_antihack_name_ban=					CreateConVar("ah_name_ban",										"0","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players for having hacking advertisement in their names.");
 
-	h_antihack_filter_location=				CreateConVar("ah_wordsearch_location",							"configs/hacking_advertisment_filter.cfg","default location:\nconfigs/hacking_advertisment_filter.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
+	h_antihack_filter_location=				CreateConVar("ah_wordsearch_location",							"configs/antihack/hacking_advertisment_filter.cfg","default location:\nconfigs/antihack/hacking_advertisment_filter.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
 	h_antihack_Efilter=						CreateConVar("ah_wordsearch_extremefilter",						"0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
 
 	h_antihack_spinhack_crash=				CreateConVar("ah_spinhack_crash",								"2","0 - Disable\nAllow AntiHack to crash clients whom spinhack after X number of times.");
@@ -30,7 +30,6 @@ public AntiHack_Configuration_OnPluginStart()
 	HookConVarChange(h_DatabaseName,						DatabaseName_convar_changed);
 	HookConVarChange(h_AutosaveTime,						autosavetime_convar_changed);
 	HookConVarChange(h_SaveEnabled,							save_enabled_convar_changed);
-	HookConVarChange(h_antihack_filter_location,			filter_location_convar_changed);
 	HookConVarChange(h_Prevent_name_copying,				prevent_name_copying_convar_changed);
 	HookConVarChange(h_HighSensitivityModeEnabled,			hs_enabled_convar_changed);
 	HookConVarChange(h_antihack_spinhack_crash,				spinhack_crash_convar_changed);
@@ -53,12 +52,6 @@ public prevent_name_copying_convar_changed(Handle:convar, const String:oldValue[
 {
 	if(convar == h_Prevent_name_copying)
 		g_bPrevent_name_copying = bool:StringToInt(newValue);
-}
-
-public filter_location_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
-{
-	if(convar == h_antihack_filter_location)
-		if(FileExists(newValue)) strcopy(g_sAntihack_filter_location,sizeof(g_sAntihack_filter_location),newValue);
 }
 
 public hs_enabled_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
