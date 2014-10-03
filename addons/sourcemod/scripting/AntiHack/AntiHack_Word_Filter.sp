@@ -36,6 +36,7 @@ public OnClientPostAdminCheck(client)
 
 					Convert_UniqueID_TO_SteamID(player_authid);
 
+					AntiHackLog("%s %s for has a Potiental Threat Word in thier name!", sStrName, player_authid);
 					NotifyAdmins("%s %s for has a Potiental Threat Word in thier name!", sStrName, player_authid);
 				}
 			//KickClient(client, "");
@@ -143,11 +144,17 @@ public FilterType:filter_words(client, String:user_command[])
 				//RegAdminCmd("sm_addban", CommandAddBan, ADMFLAG_RCON, "sm_addban <time> <steamid> [reason]", "sourcebans");
 				//PrintToChat(client,"BAN");
 
-				if(sourcebans_exists && AllowBans)
+				if(sourcebans_exists && AllowFilterBans)
 				{
 					if(SOURCEBANS_AVAILABLE())
 					{
+						AntiHackLog("Banned %s %d for having a Potiental Threat Word in thier text!", player_name, player_userid);
 						SBBanPlayer(0, client, 0, "BANNED!");
+					}
+					else
+					{
+						AntiHackLog("KickClient %s %d for having a Potiental Threat Word in thier text!", player_name, player_userid);
+						KickClient(client, "WTF?");
 					}
 				}
 				//ServerCommand("sm_addban 0 %s \"check antihack logs\"",player_authid);
