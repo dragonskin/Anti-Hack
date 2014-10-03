@@ -29,7 +29,7 @@ AH_Database_SetPlayerDefaults(client)
 
 public Initialize_SQLTable()
 {
-	PrintToServer("[War3Evo] Initialize_SQLTable");
+	PrintToServer("[ANTIHACK] Initialize_SQLTable");
 	if(hDB!=INVALID_HANDLE)
 	{
 		SQL_LockDatabase(hDB); //non threading operations here, done once on plugin load only, not map change
@@ -39,9 +39,10 @@ public Initialize_SQLTable()
 		//Format(shortquery,sizeof(shortquery),"SELECT * from `antihack_tracking` LIMIT 1");
 		new Handle:query=SQL_Query(hDB,"SELECT * from `antihack_tracking` LIMIT 1");
 
-
 		if(query==INVALID_HANDLE)
 		{
+			PrintToServer("CREATE TABLE IF NOT EXISTS");
+
 			new String:createtable[3000];
 			Format(createtable,sizeof(createtable),
 			"CREATE TABLE IF NOT EXISTS `antihack_tracking` ( \
@@ -49,8 +50,8 @@ public Initialize_SQLTable()
 			`player_name` varchar(300) DEFAULT NULL, \
 			`sComment` varchar(300) DEFAULT NULL, \
 			`player_auth` int(11) DEFAULT NULL, \
-			`steamid` varchar(64) DEFAULT NULL, \
-			`steamid2` varchar(64) DEFAULT NULL, \
+			`steam2id` varchar(64) DEFAULT NULL, \
+			`steam3id` varchar(64) DEFAULT NULL, \
 			`iFirstTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', \
 			`iLastTimeHacked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', \
 			`bIsHacker` tinyint(4) DEFAULT NULL, \
@@ -67,7 +68,7 @@ public Initialize_SQLTable()
 			`iTamperingViewAnglesAimbotCount` int(11) DEFAULT NULL, \
 			`iCrashed` int(11) DEFAULT NULL, \
 			PRIMARY KEY (`player_id`), \
-			UNIQUE KEY `player_steam` (`player_steam`) \
+			UNIQUE KEY `player_steam_auth` (`player_auth`, `steam2id`, `steam3id`) \
 			) ENGINE=InnoDB AUTO_INCREMENT=1 %s",
 			g_SQLType==SQLType_MySQL?"DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci":"" );
 
@@ -76,13 +77,17 @@ public Initialize_SQLTable()
 				SetFailState("[ANTIHACK] ERROR in the creation of the SQL table antihack_tracking.");
 			}
 		}
-
-		CloseHandle(query);
+		else
+		{
+			CloseHandle(query);
+		}
 
 		SQL_UnlockDatabase(hDB);
 	}
 	else
 		PrintToServer("hDB invalid 123");
+
+	PrintToServer("[ANTIHACK] Initialize_SQLTable FINISHED");
 }
 
 /*
@@ -447,7 +452,7 @@ stock AH_SaveHackerData(client)
 					}
 
 					new String:query[3000];
-					Format(query, sizeof(query), "INSERT INTO `antihack_tracking`(`player_name`, `sComment`, `player_auth`, `steamid`, `steamid2`, `iFirstTimeHacked`, `iLastTimeHacked`, \
+					Format(query, sizeof(query), "INSERT INTO `antihack_tracking`(`player_name`, `sComment`, `player_auth`, `steam2id`, `steam3id`, `iFirstTimeHacked`, `iLastTimeHacked`, \
 					`bIsHacker`, `bAntiAimbot`, `bChanceOnHit`, `bNoDamage`, `iAimbotCount`, `iHSAimbotCount`, `iSpinhackCount`, `iEyeAnglesCount`, \
 					`iTamperingButtonsCount`, `iTamperingTickcountCount`, `iReusingMovementCommandsCount`, \
 					`iTamperingViewAnglesAimbotCount`, `iCrashed`) VALUES('%s', '%s', '%d', FROM_UNIXTIME('%d'), FROM_UNIXTIME('%d'), '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');",
