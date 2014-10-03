@@ -1,10 +1,58 @@
 // AntiHack_Name_Monitoring.sp
 
-public OnEventSpawn(client)
+public AntiHack_Name_Monitoring_OnEventSpawn(client,userid)
 {
 	if(ValidPlayer(client))
 	{
 		GetClientName(client,sOldName[client],127);
+
+		if(g_bPrevent_name_copying)
+		{
+			decl String:sTestName1[32],String:sTestName2[32];
+
+			GetClientName(client,sTestName1,sizeof(sTestName1));
+
+			FilterSentence(sTestName1);
+
+			new foundit=false;
+
+			// check for duplicate names
+			for(new i = 1; i <= MaxClients; i++)
+			{
+				//if(ValidPlayer(i) && !IsFakeClient(i))
+				if(ValidPlayer(i))
+				{
+					GetClientName(i,sTestName2,sizeof(sTestName2));
+					FilterSentence(sTestName2);
+				}
+				if(StrEqual(sTestName1,sTestName2))
+				{
+					foundit=true;
+					break;
+				}
+			}
+
+			if(foundit)
+			{
+				new String:sNameBuffer[138];
+				IntToString(userid, sNameBuffer, sizeof(sNameBuffer));
+
+				ServerCommand("sm_rcon sv_namechange_cooldown_seconds 0");
+				Format(sNameBuffer,137,"UserID-%s",sNameBuffer);
+				SetClientInfo(client, "name", sNameBuffer);
+
+				CreateTimer(1.0,StopAllNameChanging,_);
+
+				if(GAMECOLOR)
+				{
+					CPrintToChat(client,"{cyan}Similar names is not allowed on this server.  You have been renamed.");
+				}
+				else
+				{
+					PrintToChat(client,"Similar names is not allowed on this server.  You have been renamed.");
+				}
+			}
+		}
 	}
 }
 
@@ -52,7 +100,8 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 			// check for duplicate names
 			for(new i = 1; i <= MaxClients; i++)
 			{
-				if(ValidPlayer(i) && !IsFakeClient(i))
+				//if(ValidPlayer(i) && !IsFakeClient(i))
+				if(ValidPlayer(i))
 				{
 					GetClientName(i,sTestName2,sizeof(sTestName2));
 					FilterSentence(sTestName2);
@@ -76,8 +125,14 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 				CreateTimer(1.0,StopAllNameChanging,_);
 				SetEventBroadcast(event, true);
 
-				CPrintToChat(client,"{cyan}Similar names is not allowed on this server.  You have been renamed.");
-				return Plugin_Continue;
+				if(GAMECOLOR)
+				{
+					CPrintToChat(client,"{cyan}Similar names is not allowed on this server.  You have been renamed.");
+				}
+				else
+				{
+					PrintToChat(client,"Similar names is not allowed on this server.  You have been renamed.");
+				}				return Plugin_Continue;
 			}
 		}
 
