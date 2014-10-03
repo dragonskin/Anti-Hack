@@ -24,5 +24,6 @@ To-Do-List:
 * Add Eye Angles Checking module w/ High Sensitivity Mode
 * Create Convars to allow server owners to toggle on/off any system (spinhack detection, aimbot detection, etc)
 * Add Anti-Wall hacking module
+* Add convar to allow server admins to append all client's userid in front of their names in chat for only admins to see.
 
 Configure Anti-Hack: https://github.com/War3Evo/Anti-Hack/wiki/Configuration-(server.cfg)
