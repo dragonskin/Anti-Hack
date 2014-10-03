@@ -110,6 +110,8 @@ public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
 	Format(version,sizeof(version),"%s by %s",VERSION_NUM,AUTHORS);
 	CreateConVar("antihack_version",version,"AntiHack version.",FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 
+	RegPluginLibrary("antihack");
+
 	return APLRes_Success;
 }
 /**********************
@@ -557,7 +559,7 @@ stock bool:IsMBCharValid(const String:mbchar[], numbytes)
 	return true;
 }
 
-stock FilterSentence(String:message[],bool:extremefilter=false) {
+stock FilterSentence(String:message[],bool:extremefilter=false,bool:RemoveWhiteSpace=false) {
 	new charMax = strlen(message);
 	new charIndex;
 	new copyPos = 0;
@@ -569,6 +571,11 @@ stock FilterSentence(String:message[],bool:extremefilter=false) {
 		if (message[copyPos] == 0) {
 			strippedString[copyPos] = 0;
 			break;
+		}
+
+		if(RemoveWhiteSpace && IsCharSpace(message[charIndex]))
+		{
+			continue;
 		}
 
 		if(extremefilter && IsAlphaNumeric(message[charIndex]))
