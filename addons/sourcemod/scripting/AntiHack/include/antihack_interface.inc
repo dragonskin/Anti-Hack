@@ -324,7 +324,7 @@ stock AntiHackLog(const String:reason[]="", any:...)
 	decl String:date[32];
 	FormatTime(date, sizeof(date), "%m_%d_%y");
 
-	BuildPath(Path_SM, szFile, sizeof(szFile), "logs/antihack_%s.log");
+	BuildPath(Path_SM, szFile, sizeof(szFile), "logs/antihack_%s.log", date);
 	LogToFile(szFile, LogThis);
 }
 
@@ -638,7 +638,7 @@ stock bool:IsPotientalThreatWord(String:PossibleThreatWord[])
 			FilterSentence(TmpStr,ExtremeFiltering);
 		}
 
-		if(StrEqual(PossibleThreatWord,TmpStr))
+		if(StrContains(PossibleThreatWord,TmpStr,false)>=0)
 		{
 			return true;
 		}
@@ -659,7 +659,11 @@ stock bool:ParseFile()
 {
 	decl String:path[PLATFORM_MAX_PATH];
 
-	BuildPath(Path_SM,path,sizeof(path),g_sAntihack_filter_location);
+	new String:sAntihack_filter_location[PLATFORM_MAX_PATH];
+
+	GetConVarString(h_antihack_filter_location, sAntihack_filter_location, sizeof(sAntihack_filter_location));
+
+	BuildPath(Path_SM,path,sizeof(path),sAntihack_filter_location);
 
 	/* Return true if an update was available. */
 	new Handle:kv = CreateKeyValues("AntiHack");
@@ -680,8 +684,19 @@ stock bool:ParseFile()
 		{
 			do
 			{
-				KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
-				AddStringOnly(g_hPotientalThreatWords,sBuffer);
+				if(KvGetSectionName(kv, sBuffer, sizeof(sBuffer)))
+				{
+					if(AddStringOnly(g_hPotientalThreatWords,sBuffer))
+					{
+						PrintToServer("Adding hack ad words: %s",sBuffer);
+						AntiHackLog("Adding hack ad words: %s",sBuffer);
+					}
+					else
+					{
+						PrintToServer("Could not ad words: %s",sBuffer);
+						AntiHackLog("Could not ad words: %s",sBuffer);
+					}
+				}
 
 			} while (KvGotoNextKey(kv, false));
 			KvGoBack(kv);
@@ -700,7 +715,6 @@ stock AddStringOnly(Handle:handleString, const String:key[])
 	new String:TmpStr[32];
 	for(new i = 0; i < GetArraySize(handleString); i++)
 	{
-
 		GetArrayString(handleString, i, TmpStr, sizeof(TmpStr));
 		// If duplicate, return
 		if(strcmp(TmpStr, key) == 0)
