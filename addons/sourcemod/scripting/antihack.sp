@@ -24,7 +24,7 @@
 */
 #pragma semicolon 1
 
-#define VERSION_NUM "1.0.0.0"
+#define VERSION_NUM "1.0.0.0A"
 #define AUTHORS "The AntiHack Team"
 
 //#define ANTIHACK
