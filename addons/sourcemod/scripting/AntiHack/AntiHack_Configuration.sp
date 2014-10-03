@@ -9,7 +9,8 @@ public AntiHack_Configuration_OnPluginStart()
 	h_Prevent_name_copying = 				CreateConVar("ah_prevent_name_copying",							"1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for name copying.\nIt is more aggressive than the Unicode Checker");
 
 	h_antihack_ban=							CreateConVar("ah_ban",											"0","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players it can not control.");
-	h_antihack_name_ban=					CreateConVar("ah_name_ban",										"0","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players for having hacking advertisement in their names.");
+	h_antihack_name_ban=					CreateConVar("ah_name_ban",										"1","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players for having hacking advertisement in their names.");
+	h_antihack_filter_ban=					CreateConVar("ah_filter_ban",									"1","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players for having hacking advertisement in their text.");
 
 	h_antihack_filter_location=				CreateConVar("ah_wordsearch_location",							"configs/antihack/hacking_advertisment_filter.cfg","default location:\nconfigs/antihack/hacking_advertisment_filter.cfg\nOn our server the location ends up being:\n/addons/sourcemod/configs/Potiental_Threat_Words.cfg");
 	h_antihack_Efilter=						CreateConVar("ah_wordsearch_extremefilter",						"0","1 - Enabled / 0 - Disable\nUses Extreme Fitlering Methods.");
@@ -26,6 +27,7 @@ public AntiHack_Configuration_OnPluginStart()
 	HookConVarChange(h_antihack_Efilter,					wordsearch_convar_changed);
 	HookConVarChange(h_antihack_ban,						ban_convar_changed);
 	HookConVarChange(h_antihack_name_ban,					name_ban_convar_changed);
+	HookConVarChange(h_antihack_filter_ban,					filter_ban_convar_changed);
 	HookConVarChange(h_CheckForUnicodeNames,				CheckForUnicodeNames_convar_changed);
 	HookConVarChange(h_DatabaseName,						DatabaseName_convar_changed);
 	HookConVarChange(h_AutosaveTime,						autosavetime_convar_changed);
@@ -76,6 +78,12 @@ public wordsearch_convar_changed(Handle:convar, const String:oldValue[], const S
 {
 	if(convar == h_antihack_Efilter)
 		ExtremeFiltering = bool:StringToInt(newValue);
+}
+
+public filter_ban_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
+{
+	if(convar == h_antihack_filter_ban)
+		AllowFilterBans = bool:StringToInt(newValue);
 }
 
 public name_ban_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
