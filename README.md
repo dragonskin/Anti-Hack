@@ -2,6 +2,8 @@ Anti-Hack - Currently still in development.
 =========
 
 AntiHack will compile and run, but it is now considered ALPHA!   Use at your own risk!
+* Tested: SpinHack Detection & Crash System (Works)
+* Database (creation works) (still needs work)
 
 
 Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti-Hack.
