@@ -19,8 +19,8 @@ public AntiHack_Name_Monitoring_OnEventSpawn(client,userid)
 			// check for duplicate names
 			for(new i = 1; i <= MaxClients; i++)
 			{
-				//if(ValidPlayer(i) && !IsFakeClient(i))
-				if(ValidPlayer(i))
+				//if(client!=i && ValidPlayer(i) && !IsFakeClient(i))
+				if(client!=i && ValidPlayer(i))
 				{
 					GetClientName(i,sTestName2,sizeof(sTestName2));
 					FilterSentence(sTestName2);
@@ -100,8 +100,8 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 			// check for duplicate names
 			for(new i = 1; i <= MaxClients; i++)
 			{
-				//if(ValidPlayer(i) && !IsFakeClient(i))
-				if(ValidPlayer(i))
+				//if(client!=i && ValidPlayer(i) && !IsFakeClient(i))
+				if(client!=i && ValidPlayer(i))
 				{
 					GetClientName(i,sTestName2,sizeof(sTestName2));
 					FilterSentence(sTestName2);
