@@ -22,20 +22,6 @@
  * LISTS NATIVES AND FORWARDS, BUT NOT ACTUALLY DEFINES THE CODE
  */
 
-#undef REQUIRE_EXTENSIONS
-
-#include <sourcemod>
-#include <antihack>
-
-#include <sdktools_functions>
-
-#tryinclude <morecolors>
-#tryinclude <ircrelay>
-
-#include "AntiHack/include/antihack_variables.inc"
-#include "AntiHack/include/antihack_constants.inc"
-
-
 public APLRes:AskPluginLoad2(Handle:plugin,bool:late,String:error[],err_max)
 {
 	new String:gameDir[64];
@@ -363,15 +349,7 @@ stock NotifyAdmins(const String:reason[]="", any:...)
 			}
 		}
 	}
-
-#if defined _ircrelay_included
-	if(ircrelay_exists)
-	{
-		// Relay admin notice to IRC.
-		Format(LogThis, sizeof(LogThis), "[IRC-ANTIHACK] %s", LogThis);
-		IRC_Broadcast(IrcChannel_Private, LogThis);
-	}
-#endif
+	NotifyIRC(LogThis);
 }
 
 stock bool:ValidPlayer(client,bool:check_alive=false,bool:alivecheckbyhealth=false) {
@@ -820,7 +798,8 @@ public bool:SQL_FastQueryLogOnError(Handle:DB,const String:query[]) {
 	if(!SQL_FastQuery(DB,query)) {
 		new String:error[256];
 		SQL_GetError(DB, error, sizeof(error));
-		LogError("SQLFastQuery %s failed, Error: %s",query,error);
+		LogError("SQLFastQuery Query: %s",query);
+		LogError("SQLFastQuery Error: %s",error);
 		return false;
 	}
 	return true;
