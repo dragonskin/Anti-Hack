@@ -23,6 +23,7 @@ public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 	new client = GetClientOfUserId(userid);
 
 	AntiHack_Aimbot_Detection_PlayerSpawn(client,userid);
+	AntiHack_Name_Monitoring_OnEventSpawn(client,userid);
 }
 
 public Hook_Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)
