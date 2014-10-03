@@ -380,7 +380,7 @@ public SQLCallback_LookupPlayer(Handle:owner,Handle:hndl,const String:error[],an
 ////////////////////// DATABASE: SAVE DATA ///////////////////////////
 ////////////////////// DATABASE: SAVE DATA ///////////////////////////
 
-stock AH_SaveHackerData(client)
+public bool:AH_SaveHackerData(client)
 {
 	if(hDB && ValidPlayer(client) && !IsFakeClient(client) && g_bSaveEnabled)
 	{
@@ -417,6 +417,8 @@ stock AH_SaveHackerData(client)
 					AHGetHackerProp(client,iReusingMovementCommandsCount), AHGetHackerProp(client,iTamperingViewAnglesAimbotCount), AHGetHackerProp(client,iCrashed), AHGetHackerProp(client,iPlayerID));
 					SQL_TQuery(hDB, SQLCallback_Void, query, sizeof(query));
 					PrintToServer("ANTIHACK: %s",query);
+
+					return true;
 				}
 				else if(AHGetHackerProp(client,bIsHacker))
 				{
@@ -467,9 +469,12 @@ stock AH_SaveHackerData(client)
 					SQL_TQuery(hDB, SQLCallback_LastInsertID, query, GetClientUserId(client));
 
 					PrintToServer("ANTIHACK: %s",query);
+
+					return true;
 				}
 		}
 	}
+	return false;
 }
 public SQLCallback_LastInsertID(Handle:db, Handle:hndl, const String:error[], any:userid)
 {
