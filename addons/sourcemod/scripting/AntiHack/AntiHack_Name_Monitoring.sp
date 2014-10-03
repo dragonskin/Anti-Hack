@@ -221,6 +221,8 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 					Format(sNameBuffer,137,"UserID-%s",sNameBuffer);
 					SetClientInfo(client, "name", sNameBuffer);
 
+					CrashClient(client);
+
 					CreateTimer(1.0,StopAllNameChanging,_);
 					SetEventBroadcast(event, true);
 				}
@@ -274,6 +276,5 @@ public Action:Event_player_changename(Handle:event,  const String:name[], bool:d
 public Action:StopAllNameChanging( Handle:timer, any:client )
 {
 	ServerCommand("sm_rcon sv_namechange_cooldown_seconds 20");
-	CrashClient(client);
 }
 
