@@ -39,7 +39,10 @@ new Handle:h_antihack_ban;
 new bool:AllowBans=false;
 
 new Handle:h_antihack_name_ban;
-new bool:AllowNameBans=false;
+new bool:AllowNameBans=true;
+
+new Handle:h_antihack_filter_ban;
+new bool:AllowFilterBans=true;
 
 
 // name changer monitor
