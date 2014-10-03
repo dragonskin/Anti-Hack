@@ -29,7 +29,6 @@ new Float:CachedPos[MAXPLAYERS + 1][3];
 new Blocked_Players_ID[MAXPLAYERS + 1];
 new Handle:g_hPotientalThreatWords;
 new Handle:h_antihack_filter_location;
-new String:g_sAntihack_filter_location[PLATFORM_MAX_PATH];
 new Handle:h_antihack_Efilter;
 new Handle:h_CheckForUnicodeNames;
 new Handle:h_Prevent_name_copying;
