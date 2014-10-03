@@ -24,6 +24,7 @@
 */
 #pragma semicolon 1
 
+
 #define VERSION_NUM "1.0.0.0A"
 #define AUTHORS "The AntiHack Team"
 
@@ -110,6 +111,10 @@ public Plugin:myinfo=
 
 public OnPluginStart()
 {
+	new String:version[64];
+	Format(version,sizeof(version),"%s by %s",VERSION_NUM,AUTHORS);
+
+	CreateConVar("antihack_version",version,"AntiHack version.",FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 
 	PrintToServer("--------------------------OnPluginStart----------------------");
 
