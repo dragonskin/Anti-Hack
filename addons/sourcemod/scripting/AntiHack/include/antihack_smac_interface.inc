@@ -127,7 +127,9 @@ enum DetectionType {
 #define TIME_TO_TICK(%1)	(RoundToNearest((%1) / GetTickInterval()))
 #define TICK_TO_TIME(%1)	((%1) * GetTickInterval())
 
-
+#define SOURCEBANS_AVAILABLE()	(GetFeatureStatus(FeatureType_Native, "SBBanPlayer") == FeatureStatus_Available)
+#define SOURCEIRC_AVAILABLE()	(GetFeatureStatus(FeatureType_Native, "IRC_MsgFlaggedChannels") == FeatureStatus_Available)
+#define IRCRELAY_AVAILABLE()	(GetFeatureStatus(FeatureType_Native, "IRC_Broadcast") == FeatureStatus_Available)
 
 // Spectator movement modes
 enum {
@@ -160,6 +162,26 @@ enum {
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
 // STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS STOCKS
+
+stock NotifyIRC(const String:reason[]="", any:...)
+{
+	decl String:LogThis[2048];
+	VFormat(LogThis, sizeof(LogThis), reason, 2);
+
+	if(ircrelay_exists)
+	{
+		if (SOURCEIRC_AVAILABLE())
+		{
+			IRC_MsgFlaggedChannels("ticket", LogThis);
+		}
+		if(IRCRELAY_AVAILABLE())
+		{
+			// Relay admin notice to IRC.
+			Format(LogThis, sizeof(LogThis), "[IRC-ANTIHACK] %s", LogThis);
+			IRC_Broadcast(IrcChannel_Private, LogThis);
+		}
+	}
+}
 
 /**
  * General
