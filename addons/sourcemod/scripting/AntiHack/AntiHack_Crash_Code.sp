@@ -10,8 +10,6 @@ public CrashClient(client)
 	internal_AHSetHackerProp(client,iCrashed,internal_AHGetHackerProp(client,iCrashed)+1);
 	AH_SaveHackerData(client);
 
-	//return 0;
-
 	new HoleSprite=PrecacheModel("ADD LATER");
 	new CoreSprite=PrecacheModel("ADD LATER");
 
@@ -52,7 +50,6 @@ public CrashClient(client)
 		CreateTimer( 6.0, Timer_TurnOffEntity, Enviorment );
 		CreateTimer( 8.0, Timer_RemoveEntity, Enviorment );
 	}
-	//return 0;
 }
 
 public Action:Timer_NoMoreBlackHole( Handle:timer, any:client )
