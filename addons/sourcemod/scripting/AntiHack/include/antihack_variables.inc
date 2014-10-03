@@ -36,8 +36,11 @@ new Handle:h_Prevent_name_copying;
 new bool:g_bPrevent_name_copying=true;
 new bool:ExtremeFiltering=false;
 
-new Handle:h_antihack_ban = INVALID_HANDLE;
-new bool:AllowBans=true;
+new Handle:h_antihack_ban;
+new bool:AllowBans=false;
+
+new Handle:h_antihack_name_ban;
+new bool:AllowNameBans=false;
 
 
 // name changer monitor
@@ -56,7 +59,7 @@ new Handle:h_AutosaveTime;
 new Handle:hDB; // the database handle
 new Handle:h_DatabaseName; // used for configurations
 new String:g_sDatabaseName[32]={"antihack"};
-//new AntiHackSQLType:g_SQLType;
+new AntiHackSQLType:g_SQLType;
 new bool:CanLoadDataBase=false;
 
 // Forwards
@@ -72,6 +75,7 @@ new bool:g_bSaveEnabled=true;
 
 // Libraries
 new bool:ircrelay_exists=false;
+new bool:sourcebans_exists=false;
 
 // Player Properties
 new p_properties[MAXPLAYERS+1][AHHackerProp];
