@@ -12,15 +12,18 @@ public OnClientPostAdminCheck(client)
 				if(sourcebans_exists && AllowNameBans)
 				{
 #if defined _sourcebans_included
-					new String:player_authid[64];
-					if (!GetClientAuthString(client, player_authid, 64))
+					if(SOURCEBANS_AVAILABLE())
 					{
-						strcopy(player_authid, 64, "UNKNOWN");
-					}
+						new String:player_authid[64];
+						if (!GetClientAuthString(client, player_authid, 64))
+						{
+							strcopy(player_authid, 64, "UNKNOWN");
+						}
 
-					Convert_UniqueID_TO_SteamID(player_authid);
-					AntiHackLog("Banned %s %s for having a Potiental Threat Word in thier name!", sStrName, player_authid);
-					SBBanPlayer(0, client, 0, "BANNED!");
+						Convert_UniqueID_TO_SteamID(player_authid);
+						AntiHackLog("Banned %s %s for having a Potiental Threat Word in thier name!", sStrName, player_authid);
+						SBBanPlayer(0, client, 0, "BANNED!");
+					}
 #endif
 				}
 				else
@@ -140,13 +143,15 @@ public FilterType:filter_words(client, String:user_command[])
 				//RegAdminCmd("sm_addban", CommandAddBan, ADMFLAG_RCON, "sm_addban <time> <steamid> [reason]", "sourcebans");
 				//PrintToChat(client,"BAN");
 
-#if defined _sourcebans_included
 				if(sourcebans_exists && AllowBans)
 				{
-					SBBanPlayer(0, client, 0, "BANNED!");
+					if(SOURCEBANS_AVAILABLE())
+					{
+						SBBanPlayer(0, client, 0, "BANNED!");
+					}
 				}
 				//ServerCommand("sm_addban 0 %s \"check antihack logs\"",player_authid);
-#endif
+
 				//KickClient(client, "CONGRATS!!! YOU WIN A...");
 			}
 			return AH_Filter_Ban;
