@@ -4,7 +4,8 @@ Anti-Hack - Currently still in development.
 AntiHack will compile and run, but it is now considered ALPHA!   Use at your own risk!
 
 Tested:
-* SpinHack Detection & Crash System (Works)
+* SpinHack Detection (works)
+* Crash System (works)
 * Database (creation works) (inserting and updating now works)
 
 
