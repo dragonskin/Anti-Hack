@@ -1,5 +1,73 @@
 // AntiHack_Name_Monitoring.sp
 
+/*
+public Name_Monitoring_OnClientPutInServer(client)
+{
+	CreateTimer(20.0, Timer_CheckName, GetClientUserId(client));
+}
+
+public Action:Timer_CheckName(Handle:timer, any:userid)
+{
+	DP("Timer_CheckName");
+	new client = GetClientOfUserId(userid);
+	if(ValidPlayer(client))
+	{
+		if(g_bPrevent_name_copying)
+		{
+			decl String:sTestName1[32],String:sTestName2[32];
+
+			GetClientName(client,sTestName1,sizeof(sTestName1));
+
+			//DP("before trim sTestName1 %s",sTestName1);
+
+			//TrimString(sTestName1);
+
+			//DP("after trim sTestName1 %s",sTestName1);
+
+			FilterSentence(sTestName1,_,true);
+
+			//DP("after filter sTestName1 %s",sTestName1);
+
+			new foundit=false;
+
+			// check for duplicate names
+			for(new i = 1; i <= MaxClients; i++)
+			{
+				//if(client!=i && ValidPlayer(i) && !IsFakeClient(i))
+				if(client!=i && ValidPlayer(i))
+				{
+					GetClientName(i,sTestName2,sizeof(sTestName2));
+					//DP("before filter sTestName2 %s",sTestName2);
+					//TrimString(sTestName2);
+					//DP("after filter sTestName2 %s",sTestName2);
+					FilterSentence(sTestName2,_,true);
+					//DP("after filter sTestName2 %s",sTestName2);
+				}
+				if(StrEqual(sTestName1,sTestName2))
+				{
+					foundit=true;
+					break;
+				}
+			}
+
+			if(foundit)
+			{
+				new String:sNameBuffer[138];
+				IntToString(userid, sNameBuffer, sizeof(sNameBuffer));
+
+				Format(sNameBuffer,137,"UserID-%s",sNameBuffer);
+				SetClientInfo(client, "name", sNameBuffer);
+				ServerCommand("sm_rcon sv_namechange_cooldown_seconds 0");
+
+				CreateTimer(1.0,StopAllNameChanging,_);
+
+				PrintToChat(client,"Similar names is not allowed on this server.  You have been renamed.");
+			}
+		}
+	}
+	return Plugin_Stop;
+}*/
+
 public AntiHack_Name_Monitoring_OnEventSpawn(client,userid)
 {
 	if(ValidPlayer(client))
@@ -12,7 +80,7 @@ public AntiHack_Name_Monitoring_OnEventSpawn(client,userid)
 
 			GetClientName(client,sTestName1,sizeof(sTestName1));
 
-			FilterSentence(sTestName1);
+			FilterSentence(sTestName1,_,true);
 
 			new foundit=false;
 
@@ -23,7 +91,7 @@ public AntiHack_Name_Monitoring_OnEventSpawn(client,userid)
 				if(client!=i && ValidPlayer(i))
 				{
 					GetClientName(i,sTestName2,sizeof(sTestName2));
-					FilterSentence(sTestName2);
+					FilterSentence(sTestName2,_,true);
 				}
 				if(StrEqual(sTestName1,sTestName2))
 				{
