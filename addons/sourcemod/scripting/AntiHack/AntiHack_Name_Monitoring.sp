@@ -80,7 +80,7 @@ public AntiHack_Name_Monitoring_OnEventSpawn(client,userid)
 
 			GetClientName(client,sTestName1,sizeof(sTestName1));
 
-			FilterSentence(sTestName1,_,true);
+			FilterSentence(sTestName1,true,true);
 
 			new foundit=false;
 
@@ -91,7 +91,7 @@ public AntiHack_Name_Monitoring_OnEventSpawn(client,userid)
 				if(client!=i && ValidPlayer(i))
 				{
 					GetClientName(i,sTestName2,sizeof(sTestName2));
-					FilterSentence(sTestName2,_,true);
+					FilterSentence(sTestName2,true,true);
 				}
 				if(StrEqual(sTestName1,sTestName2))
 				{
