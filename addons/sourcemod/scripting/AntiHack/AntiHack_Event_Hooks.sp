@@ -3,8 +3,6 @@
 public AntiHack_Event_Hooks_OnPluginStart()
 {
 	// Hooks.
-	HookEvent("player_changename", Event_player_changename, EventHookMode_Pre);
-
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 
 	if (GAMETF)
@@ -23,7 +21,6 @@ public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 	new client = GetClientOfUserId(userid);
 
 	AntiHack_Aimbot_Detection_PlayerSpawn(client,userid);
-	AntiHack_Name_Monitoring_OnEventSpawn(client,userid);
 }
 
 public Hook_Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)

@@ -5,8 +5,6 @@ public AntiHack_Configuration_OnPluginStart()
 	h_DatabaseName=							CreateConVar("ah_database",										"antihack");
 	h_SaveEnabled=							CreateConVar("ah_save_enabled",									"1");
 	h_AutosaveTime=							CreateConVar("ah_autosavetime",									"300.0");
-	h_CheckForUnicodeNames = 				CreateConVar("ah_check_unicode_name_changing",					"2","0 - Disables\nDoes not filter the name, but checks if they name contains banned unicode characters and allows up to X number of times before Anti-Hack takes action.");
-	h_Prevent_name_copying = 				CreateConVar("ah_prevent_name_copying",							"1","1 - Enabled / 0 - Disable\nRemoves all non alpha-numeric characters and checks for name copying.\nIt is more aggressive than the Unicode Checker");
 
 	h_antihack_ban=							CreateConVar("ah_ban",											"0","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players it can not control.");
 	h_antihack_name_ban=					CreateConVar("ah_name_ban",										"1","1 - Enabled / 0 - Disable\nAllow AntiHack to ban players for having hacking advertisement in their names.");
@@ -28,14 +26,13 @@ public AntiHack_Configuration_OnPluginStart()
 	HookConVarChange(h_antihack_ban,						ban_convar_changed);
 	HookConVarChange(h_antihack_name_ban,					name_ban_convar_changed);
 	HookConVarChange(h_antihack_filter_ban,					filter_ban_convar_changed);
-	HookConVarChange(h_CheckForUnicodeNames,				CheckForUnicodeNames_convar_changed);
 	HookConVarChange(h_DatabaseName,						DatabaseName_convar_changed);
 	HookConVarChange(h_AutosaveTime,						autosavetime_convar_changed);
 	HookConVarChange(h_SaveEnabled,							save_enabled_convar_changed);
-	HookConVarChange(h_Prevent_name_copying,				prevent_name_copying_convar_changed);
 	HookConVarChange(h_HighSensitivityModeEnabled,			hs_enabled_convar_changed);
 	HookConVarChange(h_antihack_spinhack_crash,				spinhack_crash_convar_changed);
 	HookConVarChange(h_antihack_spinhack_warning,			spinhack_warning_convar_changed);
+
 }
 
 public spinhack_warning_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
@@ -48,12 +45,6 @@ public spinhack_crash_convar_changed(Handle:convar, const String:oldValue[], con
 {
 	if(convar == h_antihack_spinhack_crash)
 		g_iCrash_OnSpinHack = bool:StringToInt(newValue);
-}
-
-public prevent_name_copying_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
-{
-	if(convar == h_Prevent_name_copying)
-		g_bPrevent_name_copying = bool:StringToInt(newValue);
 }
 
 public hs_enabled_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
@@ -96,12 +87,6 @@ public ban_convar_changed(Handle:convar, const String:oldValue[], const String:n
 {
 	if(convar == h_antihack_ban)
 		AllowBans = bool:StringToInt(newValue);
-}
-
-public CheckForUnicodeNames_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])
-{
-	if(convar == h_CheckForUnicodeNames)
-		g_iCheckForUnicodeNames = StringToInt(newValue);
 }
 
 public DatabaseName_convar_changed(Handle:convar, const String:oldValue[], const String:newValue[])

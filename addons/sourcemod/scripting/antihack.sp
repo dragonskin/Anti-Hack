@@ -25,7 +25,7 @@
 #pragma semicolon 1
 
 
-#define VERSION_NUM "1.0.0.0A"
+#define VERSION_NUM "1.0.0.1A"
 #define AUTHORS "The AntiHack Team"
 
 //#define ANTIHACK
@@ -82,7 +82,6 @@ native IRC_Broadcast(IrcChannel:type, const String:format[], any:...);
 #include "AntiHack/AntiHack_Crash_Code.sp"
 #include "AntiHack/AntiHack_Database.sp"
 #include "AntiHack/AntiHack_DatabaseConnect.sp"
-#include "AntiHack/AntiHack_Name_Monitoring.sp"
 // AntiHack_SpinHack_Detection.sp contains some smac code:
 #include "AntiHack/AntiHack_SpinHack_Detection.sp"
 
@@ -119,18 +118,6 @@ public OnPluginStart()
 	PrintToServer("--------------------------OnPluginStart----------------------");
 
 	PrintToServer("[ANTIHACK] Plugin finished loading.\n-------------------END OnPluginStart-------------------");
-
-	// AntiHack_Name_Monitoring.sp
-	new UserMsg:umOnDebugP = GetUserMessageId("SayText2");
-	if (umOnDebugP != INVALID_MESSAGE_ID)
-	{
-		HookUserMessage(umOnDebugP, OnDebugP, true);
-	}
-	else
-	{
-		LogError("[SCP] This mod appears not to support SayText2.  Plugin disabled.");
-		SetFailState("Error hooking usermessage saytext2");
-	}
 
 	RegConsoleCmd("say",          AH_SayCommand);
 	RegConsoleCmd("say_team",     AH_TeamSayCommand);

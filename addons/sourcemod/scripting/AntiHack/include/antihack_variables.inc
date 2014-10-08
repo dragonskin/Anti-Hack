@@ -30,9 +30,6 @@ new Blocked_Players_ID[MAXPLAYERS + 1];
 new Handle:g_hPotientalThreatWords;
 new Handle:h_antihack_filter_location;
 new Handle:h_antihack_Efilter;
-new Handle:h_CheckForUnicodeNames;
-new Handle:h_Prevent_name_copying;
-new bool:g_bPrevent_name_copying=true;
 new bool:ExtremeFiltering=false;
 
 new Handle:h_antihack_ban;
@@ -43,13 +40,6 @@ new bool:AllowNameBans=true;
 
 new Handle:h_antihack_filter_ban;
 new bool:AllowFilterBans=true;
-
-
-// name changer monitor
-new TrackNameChanges[MAXPLAYERS+1];
-new bool:TrackNameChangesTriggered[MAXPLAYERS+1];
-new String:sOldName[MAXPLAYERS+1][64];
-new g_iCheckForUnicodeNames=2;
 
 // crash code
 new bool:bStillBlackhole[MAXPLAYERS + 1];
