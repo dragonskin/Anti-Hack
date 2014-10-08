@@ -7,9 +7,9 @@ Tested:
 * SpinHack Detection (works)
 * Crash System (TF2 tested & works, other systems still need a crash test)
 * Database (creation works) (inserting and updating now works)
-* Prevent Name Copying on Join (works) - renames player to their userid
-* Prevent Name Copying on name change (works) - renames player to their userid
 
+Moved Prevent Name copying and unicode filter to a separate plugin that you can find here:
+https://forums.alliedmods.net/showthread.php?p=2207177#post2207177
 
 Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti-Hack.
 
@@ -19,9 +19,7 @@ Sourcemod-Plugin. Prefer to keep your players instead of banning them?  Use Anti
 * High Sensitivity Mode (Detect hacking users before the "acutal detection" or detect them trying to "beat SMACS").
 * Uses both the Old Steam ID and the New Steam ID for TF2 Games
 * Relies on the User's Account ID instead of Steam ID for the database.
-* Prevent Name Copying
 * Filter Hacking Ads
-* Check and Prevent Unicode Name changing
 * SpinHack Early Warning System (optional, default off)
 
 
@@ -34,7 +32,5 @@ To-Do-List:
 * Add Eye Angles Checking module w/ High Sensitivity Mode
 * Create Convars to allow server owners to toggle on/off any system (spinhack detection, aimbot detection, etc)
 * Add Anti-Wall hacking module
-* Add convar to allow server admins to append all client's userid in front of their names in chat for only admins to see.
-* May or May not add: Reserved Name List (prevents players from taking a reserved name)
 
 Configure Anti-Hack: https://github.com/War3Evo/Anti-Hack/wiki/Configuration-(server.cfg)
