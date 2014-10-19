@@ -573,6 +573,11 @@ stock FilterSentence(String:message[],bool:extremefilter=false,bool:RemoveWhiteS
 			break;
 		}
 
+		if (GetCharBytes(message[charIndex])>1)
+		{
+			continue;
+		}
+
 		if(RemoveWhiteSpace && IsCharSpace(message[charIndex]))
 		{
 			continue;
