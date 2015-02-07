@@ -32,5 +32,10 @@ To-Do-List:
 * Add Eye Angles Checking module w/ High Sensitivity Mode
 * Create Convars to allow server owners to toggle on/off any system (spinhack detection, aimbot detection, etc)
 * Add Anti-Wall hacking module
+* Add webpage access feature w/ admin controls & comments
+* -- Extra features for webpanel: instant server control adjustment (requires rcon access), Live Feedback from server (requires java console application [opensource]), email notifications, include charts for the data, add ranking (ranks based on how sure the server is that the person is hacking), allow some records to be public display
+* Add High-Sensitivity Tracking to the database (including the variables used for each track count)
+* Add ability for admins to "see thru walls" only while in spectator mode (TF2 only) -- helps admins identify wall hackers on your server.   Hackers whom tend to "know" players coming around a corner or not.
 
-Configure Anti-Hack: https://github.com/War3Evo/Anti-Hack/wiki/Configuration-(server.cfg)
+
+https://github.com/War3Evo/Anti-Hack/wiki/Configuration-(server.cfg)
